@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>SignalR Message</title>
+</head>
+<body>
+    <div>
+        <ul id="discussion"></ul>
+    </div>
+    <script src="Scripts/jquery-1.6.4.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="/signalr/hubs"></script>
+    <script type="text/javascript">
+        $(function () {
+            var token = '';
+
+            $.connection.hub.logging = true;
+            notificationHubProxy = $.connection.notificationHub;
+
+            login = function (user, pwd) {
+
+                //var request = { u: user, p: pwd };
+
+                //$.ajax({
+                //    type: "POST",
+                //    url: 'http://localhost:38655/api/account/login',
+                //    data: JSON.stringify(request),
+                //    headers: {
+                //        "Content-Type": "application/json"
+                //    },
+                //    success: function (data) {
+                //        console.log(data);
+                //    }
+                //});
+
+                fetch('http://localhost:38655/api/account/login', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ u: user, p: pwd })
+                }).then(response => response.json())
+                    .then(function (token) {
+
+                        $.connection.hub.qs = `token=${token}`;
+                        $.connection.hub.start().done(function () {
+                            console.log('connected');
+                        }).fail(function (result) {
+                            console.log(result);
+                        });
+
+                    });
+            };
+
+            notificationHubProxy.client.updateUsers = function (username) {
+                console.log('Connected : ' + username);
+            };
+
+            notificationHubProxy.client.broadcastMessage = function (message, sender) {
+                console.log('A message from: ' + sender + ' ' + message);
+            };
+
+            sendMessage = function (message) {
+                notificationHubProxy.server.send(message);
+            };
+        });
+    </script>
+</body>
+</html>
