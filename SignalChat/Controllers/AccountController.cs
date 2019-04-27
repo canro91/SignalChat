@@ -1,31 +1,49 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using SignalChat.Core;
+using SignalChat.Filters;
 using SignalChat.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using System.Configuration;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace SignalChat.Controllers
 {
     [Authorize]
+    [ValidateModel]
     public class AccountController : ApiController
     {
+        private readonly IRegisterService _registerService;
+        private readonly ILoginService _loginService;
+
+        public AccountController()
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
+            var userRepository = new UserRepository(connectionString);
+            var passwordService = new ProtectPasswordService();
+
+            _registerService = new RegisterService(userRepository, passwordService);
+
+            var secret = ConfigurationManager.AppSettings["Secret"];
+            var tokenService = new TokenService(secret);
+            _loginService = new LoginService(userRepository, passwordService, tokenService);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage Register([FromBody] RegisterViewModel loginViewModel)
+        {
+            _registerService.RegisterUser(username: loginViewModel.Username,
+                                          plainTextPassword: loginViewModel.Password);
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public IHttpActionResult Login([FromBody] LoginViewModel loginViewModel)
         {
-            // TODO Token generator
-            var claimsIdentity = new ClaimsIdentity();
-            claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, loginViewModel.Username));
-
-            var credentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your-256-bit-secret")), SecurityAlgorithms.HmacSha256Signature, SecurityAlgorithms.Sha256Digest);
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateJwtSecurityToken(issuer: null, audience: null, subject: claimsIdentity,
-                                            notBefore: null, expires: null, issuedAt: null,
-                                            signingCredentials: credentials);
-
-            return ReplyWith(token.RawData);
+            var token = _loginService.Login(username: loginViewModel.Username, plainTextPassword: loginViewModel.Password);
+            return ReplyWith(token);
         }
 
         private IHttpActionResult ReplyWith(string token)
@@ -34,11 +52,6 @@ namespace SignalChat.Controllers
             {
                 return Unauthorized();
             }
-
-            //if (!string.IsNullOrEmpty(result.Error))
-            //{
-            //    return Unauthorized(new AuthenticationHeaderValue(JwtController.AuthScheme, result.Error));
-            //}
 
             return Ok(token);
         }

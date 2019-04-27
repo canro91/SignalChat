@@ -1,9 +1,9 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using Microsoft.Owin;
+﻿using Microsoft.Owin;
 using Microsoft.Owin.Security.Jwt;
 using Owin;
+using SignalChat.Core;
 using SignalChat.SignalR.Jwt;
-using System.Text;
+using System.Configuration;
 
 [assembly: OwinStartup(typeof(SignalChat.Startup))]
 namespace SignalChat
@@ -14,15 +14,12 @@ namespace SignalChat
         {
             app.UseJwtSignalRAuthentication(authQueryKey: "token");
 
+            var secret = ConfigurationManager.AppSettings["Secret"];
+            var tokenService = new TokenService(secret);
+
             app.UseJwtBearerAuthentication(new JwtBearerAuthenticationOptions
             {
-                TokenValidationParameters = new TokenValidationParameters
-                {
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your-256-bit-secret")),
-                    ValidateLifetime = false,
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                }
+                TokenValidationParameters = tokenService.TokenValidationParameters
             });
 
             app.MapSignalR();

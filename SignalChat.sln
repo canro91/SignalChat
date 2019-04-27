@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalChat", "SignalChat\SignalChat.csproj", "{D85CE2D2-F14A-46BD-AC5C-C00E5FB8C266}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalChat.Core", "SignalChat.Core\SignalChat.Core.csproj", "{6C3C7872-2A60-4C32-A96C-7F3D656F516C}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SignalChat.Database", "SignalChat.Database\SignalChat.Database.sqlproj", "{2B8281EB-6312-495F-990C-B57566813DEE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,16 @@ Global
 		{D85CE2D2-F14A-46BD-AC5C-C00E5FB8C266}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D85CE2D2-F14A-46BD-AC5C-C00E5FB8C266}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D85CE2D2-F14A-46BD-AC5C-C00E5FB8C266}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C3C7872-2A60-4C32-A96C-7F3D656F516C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C3C7872-2A60-4C32-A96C-7F3D656F516C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C3C7872-2A60-4C32-A96C-7F3D656F516C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C3C7872-2A60-4C32-A96C-7F3D656F516C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B8281EB-6312-495F-990C-B57566813DEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B8281EB-6312-495F-990C-B57566813DEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B8281EB-6312-495F-990C-B57566813DEE}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{2B8281EB-6312-495F-990C-B57566813DEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B8281EB-6312-495F-990C-B57566813DEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B8281EB-6312-495F-990C-B57566813DEE}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -17,21 +17,25 @@
             $.connection.hub.logging = true;
             notificationHubProxy = $.connection.notificationHub;
 
+            register = function (user, pwd, confirmPwd) {
+                fetch('http://localhost:38655/api/account/register', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ u: user, p: pwd, p2: confirmPwd })
+                }).then(function (response) {
+                    if (response.ok) {
+                        console.log('Successfully registered.');
+                    } else {
+                        console.log('Something went wrong!');
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+
             login = function (user, pwd) {
-
-                //var request = { u: user, p: pwd };
-
-                //$.ajax({
-                //    type: "POST",
-                //    url: 'http://localhost:38655/api/account/login',
-                //    data: JSON.stringify(request),
-                //    headers: {
-                //        "Content-Type": "application/json"
-                //    },
-                //    success: function (data) {
-                //        console.log(data);
-                //    }
-                //});
 
                 fetch('http://localhost:38655/api/account/login', {
                     method: 'post',
@@ -39,6 +43,12 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ u: user, p: pwd })
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response;
+                    }
+
+                    throw Error(response.statusText);
                 }).then(response => response.json())
                     .then(function (token) {
 
@@ -49,6 +59,8 @@
                             console.log(result);
                         });
 
+                    }).catch(function (error) {
+                        console.log('Something went wrong!');
                     });
             };
 

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace SignalChat.Models
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class LoginViewModel
+    public class RegisterViewModel
     {
         [Required]
         [StringLength(256, MinimumLength = 5)]
@@ -16,5 +16,11 @@ namespace SignalChat.Models
         [MinLength(8)]
         [JsonProperty(PropertyName = "p")]
         public string Password { get; set; }
+
+        [Required]
+        [MinLength(8)]
+        [Compare(nameof(Password))]
+        [JsonProperty(PropertyName = "p2")]
+        public string ConfirmPassword { get; set; }
     }
 }
