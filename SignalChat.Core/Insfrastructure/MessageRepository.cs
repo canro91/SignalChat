@@ -26,5 +26,11 @@ namespace SignalChat.Core.Insfrastructure
             var messages = connection.Query<Message>("sp_Messages_FindMostRecent", new { Count = count });
             return messages;
         }
+
+        public void Save(Message message)
+        {
+            var connection = new SqlConnection(_connectionString);
+            connection.Execute("sp_Messages_Save", message);
+        }
     }
 }

@@ -58,6 +58,7 @@
                         $.connection.hub.start().done(function () {
                             console.log('connected');
 
+                            recents();
 
                         }).fail(function (result) {
                             console.log(result);
