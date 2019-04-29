@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
-namespace SignalChat.Core
+namespace SignalChat.Core.Contracts
 {
     public interface ITokenService
     {

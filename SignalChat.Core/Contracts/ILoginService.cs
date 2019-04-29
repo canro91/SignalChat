@@ -1,4 +1,4 @@
-﻿namespace SignalChat.Core
+﻿namespace SignalChat.Core.Contracts
 {
     public interface ILoginService
     {

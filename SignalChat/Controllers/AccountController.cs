@@ -1,4 +1,6 @@
-﻿using SignalChat.Core;
+﻿using SignalChat.Core.Contracts;
+using SignalChat.Core.Insfrastructure;
+using SignalChat.Core.Tasks;
 using SignalChat.Filters;
 using SignalChat.Models;
 using System.Configuration;

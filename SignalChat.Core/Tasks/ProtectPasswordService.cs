@@ -1,7 +1,8 @@
-﻿using System;
+﻿using SignalChat.Core.Contracts;
+using System;
 using System.Security.Cryptography;
 
-namespace SignalChat.Core
+namespace SignalChat.Core.Tasks
 {
     // PasswordStorage - https://github.com/defuse/password-hashing
     public class ProtectPasswordService : IProtectPasswordService

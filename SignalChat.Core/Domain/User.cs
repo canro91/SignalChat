@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SignalChat.Core
+namespace SignalChat.Core.Domain
 {
     public class User
     {

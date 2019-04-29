@@ -1,7 +1,9 @@
 ﻿using Insight.Database;
+using SignalChat.Core.Contracts;
+using SignalChat.Core.Domain;
 using System.Data.SqlClient;
 
-namespace SignalChat.Core
+namespace SignalChat.Core.Insfrastructure
 {
     public class UserRepository : IUserRepository
     {

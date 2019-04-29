@@ -1,4 +1,6 @@
-﻿namespace SignalChat.Core
+﻿using SignalChat.Core.Contracts;
+
+namespace SignalChat.Core.Tasks
 {
     public class LoginService : ILoginService
     {

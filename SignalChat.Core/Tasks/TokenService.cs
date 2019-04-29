@@ -1,9 +1,10 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using SignalChat.Core.Contracts;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace SignalChat.Core
+namespace SignalChat.Core.Tasks
 {
     public class TokenService : ITokenService
     {

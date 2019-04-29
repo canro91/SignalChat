@@ -1,6 +1,8 @@
-﻿using System;
+﻿using SignalChat.Core.Contracts;
+using SignalChat.Core.Domain;
+using System;
 
-namespace SignalChat.Core
+namespace SignalChat.Core.Tasks
 {
     public class RegisterService : IRegisterService
     {

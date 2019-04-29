@@ -1,4 +1,6 @@
-﻿namespace SignalChat.Core
+﻿using SignalChat.Core.Domain;
+
+namespace SignalChat.Core.Contracts
 {
     public interface IUserRepository
     {
