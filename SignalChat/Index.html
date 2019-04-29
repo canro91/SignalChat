@@ -50,14 +50,42 @@
 
                     throw Error(response.statusText);
                 }).then(response => response.json())
-                    .then(function (token) {
+                    .then(function (newToken) {
 
+                        token = newToken;
+                        
                         $.connection.hub.qs = `token=${token}`;
                         $.connection.hub.start().done(function () {
                             console.log('connected');
+
+
                         }).fail(function (result) {
                             console.log(result);
                         });
+
+                    }).catch(function (error) {
+                        console.log('Something went wrong!');
+                    });
+            };
+
+            recents = function () {
+                fetch('http://localhost:38655/api/message/get', {
+                    method: 'get',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response;
+                    }
+
+                    throw Error(response.statusText);
+                }).then(response => response.json())
+                    .then(function (data) {
+
+                        data.forEach(function (m) {
+                            console.log(`${m.username}: ${m.body}`);
+                        })
 
                     }).catch(function (error) {
                         console.log('Something went wrong!');

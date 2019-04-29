@@ -10,15 +10,16 @@ namespace SignalChat.Hubs
         public override Task OnConnected()
         {
             if (Context.User?.Identity?.IsAuthenticated == false)
-                throw new System.Exception("Usted no pasara mas alla de este nivel");
+                throw new System.Exception(SN.UnauthenticatedUser);
 
             var claims = (Context.User.Identity as ClaimsIdentity).Claims;
             var username = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
 
             Clients.All.updateUsers(username);
 
-            Clients.Client(Context.ConnectionId).broadcastMessage(
-                "Welcome to the chat room, " + username, "[server]");
+            var welcome = string.Format(SN.WelcomeMessage, username);
+            var server = SN.ServerUsername;
+            Clients.Client(Context.ConnectionId).broadcastMessage(welcome, server);
 
             return base.OnConnected();
         }

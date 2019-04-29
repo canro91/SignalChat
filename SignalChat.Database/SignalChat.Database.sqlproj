@@ -62,6 +62,8 @@
     <Build Include="Users.sql" />
     <Build Include="sp_Users_FindUserByUsername.sql" />
     <Build Include="sp_Users_Save.sql" />
+    <Build Include="Messages.sql" />
+    <Build Include="sp_Messages_FindMostRecent.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SignalChat.Database.refactorlog" />

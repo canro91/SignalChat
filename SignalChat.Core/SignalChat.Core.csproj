@@ -74,9 +74,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\ILoginService.cs" />
+    <Compile Include="Contracts\IMessageRepository.cs" />
     <Compile Include="Contracts\IProtectPasswordService.cs" />
     <Compile Include="Contracts\ITokenService.cs" />
     <Compile Include="Contracts\IUserRepository.cs" />
+    <Compile Include="Domain\Message.cs" />
+    <Compile Include="Insfrastructure\MessageRepository.cs" />
     <Compile Include="Tasks\LoginService.cs" />
     <Compile Include="Tasks\ProtectPasswordService.cs" />
     <Compile Include="Tasks\RegisterService.cs" />
