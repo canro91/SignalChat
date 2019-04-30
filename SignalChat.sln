@@ -11,6 +11,8 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SignalChat.Database", "Sign
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalChat.Bot", "SignalChat.Bot\SignalChat.Bot.csproj", "{0DC429FA-C8F2-44DA-993F-2FB86955FFF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalChat.Bot.Tests", "SignalChat.Bot.Tests\SignalChat.Bot.Tests.csproj", "{F6ED4D1A-9C86-4D71-93A4-A8E0DD5151C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{0DC429FA-C8F2-44DA-993F-2FB86955FFF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DC429FA-C8F2-44DA-993F-2FB86955FFF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DC429FA-C8F2-44DA-993F-2FB86955FFF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6ED4D1A-9C86-4D71-93A4-A8E0DD5151C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6ED4D1A-9C86-4D71-93A4-A8E0DD5151C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6ED4D1A-9C86-4D71-93A4-A8E0DD5151C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6ED4D1A-9C86-4D71-93A4-A8E0DD5151C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
