@@ -1,6 +1,6 @@
 # SignalChat
 
-SignalChat is an small chat that uses SignalR to broadcast message to clients, Restsharp to make request, CsvHelper to parse CSV files and InsightDatabase to query the database
+SignalChat is an small chat that uses SignalR to broadcast message to clients, Restsharp to make request, CsvHelper to parse CSV files, Foundatio to queue and process messages, and InsightDatabase to query the database
 
 ## Installation
 
