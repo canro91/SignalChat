@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contracts\IBroadcastMessage.cs" />
     <Compile Include="Contracts\ILoginService.cs" />
     <Compile Include="Contracts\IMessageRepository.cs" />
     <Compile Include="Contracts\IProtectPasswordService.cs" />

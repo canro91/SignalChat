@@ -4,6 +4,7 @@ using SignalChat.Bot.Services;
 using SignalChat.Core.Contracts;
 using SignalChat.Core.Insfrastructure;
 using SignalChat.Core.Tasks;
+using SignalChat.Factories;
 using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
@@ -20,8 +21,10 @@ namespace SignalChat.Hubs
             var connectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
             var messageRepository = new MessageRepository(connectionString);
 
+            var messageQueue = SignalChatFactory.CreateQueue();
+
             var stockService = new OnlineStockService();
-            var botService = new BotService(stockService);
+            var botService = new BotService(stockService, messageQueue.Value);
 
             _messageService = new SendMessageService(messageRepository, botService);
         }
@@ -44,7 +47,7 @@ namespace SignalChat.Hubs
         public void Send(string message)
         {
             var handleAsCommand = _messageService.Send(CurrentUsername, message);
-            if (handleAsCommand)
+            if (!handleAsCommand)
             {
                 Clients.All.broadcastMessage(message, CurrentUsername);
             }

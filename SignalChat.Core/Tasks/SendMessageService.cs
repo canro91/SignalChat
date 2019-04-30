@@ -40,7 +40,7 @@ namespace SignalChat.Core.Tasks
             }
         }
 
-        private static readonly Regex StockCommand = new Regex(@"^\/stock=(?<StockCode>\w+)$", RegexOptions.Compiled);
+        private static readonly Regex StockCommand = new Regex(@"^\/stock=(?<StockCode>.+)$", RegexOptions.Compiled);
         private (bool isCommand, string stockCode)  IsACommand(string message)
         {
             var matches = StockCommand.Match(message);

@@ -1,20 +1,26 @@
 ﻿using CsvHelper;
+using Foundatio.Queues;
 using SignalChat.Bot.Contracts;
 using SignalChat.Core.Contracts;
+using SignalChat.Core.Domain;
+using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace SignalChat.Bot
 {
     public class BotService : IBotService
     {
         private readonly IStockService _stockService;
+        private readonly IQueue<Message> _messageQueue;
 
-        public BotService(IStockService stockService)
+        public BotService(IStockService stockService, IQueue<Message> messageQueue)
         {
             _stockService = stockService;
+            _messageQueue = messageQueue;
         }
 
-        public void QueryAndSend(string stockCode)
+        public async Task QueryAndSend(string stockCode)
         {
             byte[] bytes = _stockService.FindStockQuote(stockCode);
 
@@ -23,9 +29,18 @@ namespace SignalChat.Bot
             using (var csv = new CsvReader(reader))
             {
                 csv.Configuration.Delimiter = ",";
-                var record = csv.GetRecord<StockQuoteCsv>();
+                var records = csv.GetRecords<StockQuoteCsv>();
 
-                var message = string.Format(SN.Message, stockCode.ToUpper(), record.Symbol, record.Close);
+                foreach (var r in records)
+                {
+                    var m = new Message
+                    {
+                        Body = string.Format(SN.Message, r.Symbol, r.Close),
+                        DeliveredAt = DateTimeOffset.Now,
+                        Username = SN.Bot
+                    };
+                    await _messageQueue.EnqueueAsync(m);
+                }
             }
         }
     }

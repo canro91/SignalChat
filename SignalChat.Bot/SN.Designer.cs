@@ -61,7 +61,16 @@ namespace SignalChat.Bot {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} quote is {1}{2} per share.
+        ///   Looks up a localized string similar to Bot.
+        /// </summary>
+        internal static string Bot {
+            get {
+                return ResourceManager.GetString("Bot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} quote is ${1} per share.
         /// </summary>
         internal static string Message {
             get {
