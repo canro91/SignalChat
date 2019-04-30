@@ -4,8 +4,30 @@
     <title>SignalR Message</title>
 </head>
 <body>
+    <div class="login-page">
+        <div class="form">
+            <div>
+                <input type="text" id="user" placeholder="name" />
+                <input type="password" id="pwd" placeholder="password" />
+                <input type="password" id="confirmPwd" placeholder="confirm password" />
+                <button onclick="register()">create</button>
+            </div><br />
+
+            <div>
+                <input type="text" id="userLogin" placeholder="username" />
+                <input type="password" id="pwdLogin" placeholder="password" />
+                <button onclick="login()">login</button>
+            </div><br />
+
+        </div>
+    </div>
+
     <div>
-        <ul id="discussion"></ul>
+        <textarea style="width: 600px; height: 300px" id="chat"></textarea>
+
+        <br />
+        <input type="text" id="msg" placeholder="message" />
+        <button onclick="sendMessage()">send</button>
     </div>
     <script src="Scripts/jquery-1.6.4.min.js"></script>
     <script src="Scripts/jquery.signalR-2.4.1.js"></script>
@@ -17,7 +39,11 @@
             $.connection.hub.logging = true;
             notificationHubProxy = $.connection.notificationHub;
 
-            register = function (user, pwd, confirmPwd) {
+            register = function () {
+                user = document.getElementById("user").value;
+                pwd = document.getElementById("pwd").value;
+                confirmPwd = document.getElementById("confirmPwd").value;
+
                 fetch('http://localhost:38655/api/account/register', {
                     method: 'post',
                     headers: {
@@ -35,7 +61,9 @@
                 });
             }
 
-            login = function (user, pwd) {
+            login = function () {
+                user = document.getElementById("userLogin").value;
+                pwd = document.getElementById("pwdLogin").value;
 
                 fetch('http://localhost:38655/api/account/login', {
                     method: 'post',
@@ -53,7 +81,7 @@
                     .then(function (newToken) {
 
                         token = newToken;
-                        
+
                         $.connection.hub.qs = `token=${token}`;
                         $.connection.hub.start().done(function () {
                             console.log('connected');
@@ -86,6 +114,7 @@
 
                         data.forEach(function (m) {
                             console.log(`${m.username}: ${m.body}`);
+                            $("#chat").append(`${m.username}: ${m.body}\n`);
                         })
 
                     }).catch(function (error) {
@@ -95,14 +124,19 @@
 
             notificationHubProxy.client.updateUsers = function (username) {
                 console.log('Connected : ' + username);
+                $("#chat").append('Connected : ' + username + '\n');
             };
 
             notificationHubProxy.client.broadcastMessage = function (message, sender) {
                 console.log('A message from: ' + sender + ' ' + message);
+                $("#chat").append('A message from: ' + sender + ' ' + message + '\n');
             };
 
-            sendMessage = function (message) {
+            sendMessage = function () {
+                message = document.getElementById("msg").value
                 notificationHubProxy.server.send(message);
+
+                document.getElementById("msg").value = '';
             };
         });
     </script>
