@@ -167,6 +167,10 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SignalChat.Bot\SignalChat.Bot.csproj">
+      <Project>{0DC429FA-C8F2-44DA-993F-2FB86955FFF0}</Project>
+      <Name>SignalChat.Bot</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SignalChat.Core\SignalChat.Core.csproj">
       <Project>{6C3C7872-2A60-4C32-A96C-7F3D656F516C}</Project>
       <Name>SignalChat.Core</Name>

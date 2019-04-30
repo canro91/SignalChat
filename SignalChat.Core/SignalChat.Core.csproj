@@ -77,6 +77,7 @@
     <Compile Include="Contracts\IMessageRepository.cs" />
     <Compile Include="Contracts\IProtectPasswordService.cs" />
     <Compile Include="Contracts\ISendMessageService.cs" />
+    <Compile Include="Contracts\IBotService.cs" />
     <Compile Include="Contracts\ITokenService.cs" />
     <Compile Include="Contracts\IUserRepository.cs" />
     <Compile Include="Domain\Message.cs" />

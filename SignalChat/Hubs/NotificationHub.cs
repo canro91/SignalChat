@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR;
+using SignalChat.Bot;
+using SignalChat.Bot.Services;
 using SignalChat.Core.Contracts;
 using SignalChat.Core.Insfrastructure;
 using SignalChat.Core.Tasks;
@@ -18,7 +20,10 @@ namespace SignalChat.Hubs
             var connectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
             var messageRepository = new MessageRepository(connectionString);
 
-            _messageService = new SendMessageService(messageRepository);
+            var stockService = new OnlineStockService();
+            var botService = new BotService(stockService);
+
+            _messageService = new SendMessageService(messageRepository, botService);
         }
 
         public override Task OnConnected()
@@ -38,9 +43,11 @@ namespace SignalChat.Hubs
         [Authorize]
         public void Send(string message)
         {
-            _messageService.Send(CurrentUsername, message);
-
-            Clients.All.broadcastMessage(message, CurrentUsername);
+            var handleAsCommand = _messageService.Send(CurrentUsername, message);
+            if (handleAsCommand)
+            {
+                Clients.All.broadcastMessage(message, CurrentUsername);
+            }
         }
 
         private string CurrentUsername
