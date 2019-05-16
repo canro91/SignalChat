@@ -1,9 +1,7 @@
 ﻿using SignalChat.Core.Contracts;
-using SignalChat.Core.Insfrastructure;
 using SignalChat.Filters;
 using SignalChat.Models;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Web.Http;
 
@@ -15,10 +13,9 @@ namespace SignalChat.Controllers
     {
         private readonly IMessageRepository _messageRepository;
 
-        public MessageController()
+        public MessageController(IMessageRepository messageRepository)
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
-            _messageRepository = new MessageRepository(connectionString);
+            _messageRepository = messageRepository;
         }
 
         public IEnumerable<MessageViewModel> Get()

@@ -1,9 +1,6 @@
 ﻿using SignalChat.Core.Contracts;
-using SignalChat.Core.Insfrastructure;
-using SignalChat.Core.Tasks;
 using SignalChat.Filters;
 using SignalChat.Models;
-using System.Configuration;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -17,17 +14,10 @@ namespace SignalChat.Controllers
         private readonly IRegisterService _registerService;
         private readonly ILoginService _loginService;
 
-        public AccountController()
+        public AccountController(IRegisterService registerService, ILoginService loginService)
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
-            var userRepository = new UserRepository(connectionString);
-            var passwordService = new ProtectPasswordService();
-
-            _registerService = new RegisterService(userRepository, passwordService);
-
-            var secret = ConfigurationManager.AppSettings["Secret"];
-            var tokenService = new TokenService(secret);
-            _loginService = new LoginService(userRepository, passwordService, tokenService);
+            _registerService = registerService;
+            _loginService = loginService;
         }
 
         [HttpPost]

@@ -2,9 +2,10 @@
 using Microsoft.Owin.Security.Jwt;
 using Owin;
 using SignalChat.Core.Contracts;
-using SignalChat.Core.Tasks;
-using SignalChat.SignalR.Jwt;
-using System.Configuration;
+using SignalChat.Middlewares;
+using SimpleInjector;
+using SimpleInjector.Integration.WebApi;
+using System.Web.Http;
 
 [assembly: OwinStartup(typeof(SignalChat.Startup))]
 namespace SignalChat
@@ -15,13 +16,21 @@ namespace SignalChat
         {
             app.UseJwtSignalRAuthentication(authQueryKey: "token");
 
-            var secret = ConfigurationManager.AppSettings["Secret"];
-            ITokenService tokenService = new TokenService(secret);
+            var container = new Container();
+            app.MapDependencies(container);
 
+            ITokenService tokenService = container.GetInstance<ITokenService>();
             app.UseJwtBearerAuthentication(new JwtBearerAuthenticationOptions
             {
                 TokenValidationParameters = tokenService.TokenValidationParameters
             });
+
+            var config = new HttpConfiguration
+            {
+                DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container)
+            };
+            WebApiConfig.Register(config);
+            app.UseWebApi(config);
 
             app.MapSignalR();
         }
