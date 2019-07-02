@@ -1,7 +1,10 @@
-﻿using Microsoft.Owin;
+﻿using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
+using Microsoft.Owin;
 using Microsoft.Owin.Security.Jwt;
 using Owin;
 using SignalChat.Core.Contracts;
+using SignalChat.HubActivator;
 using SignalChat.Middlewares;
 using SimpleInjector;
 using SimpleInjector.Integration.WebApi;
@@ -31,6 +34,9 @@ namespace SignalChat
             };
             WebApiConfig.Register(config);
             app.UseWebApi(config);
+
+            var activator = new SimpleInjectorHubActivator(container);
+            GlobalHost.DependencyResolver.Register(typeof(IHubActivator), () => activator);
 
             app.MapSignalR();
         }

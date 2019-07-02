@@ -1,7 +1,13 @@
-﻿using Owin;
+﻿using Foundatio.Queues;
+using Owin;
+using SignalChat.Bot;
+using SignalChat.Bot.Contracts;
+using SignalChat.Bot.Services;
 using SignalChat.Core.Contracts;
+using SignalChat.Core.Domain;
 using SignalChat.Core.Insfrastructure;
 using SignalChat.Core.Tasks;
+using SignalChat.Factories;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using System.Configuration;
@@ -32,6 +38,10 @@ namespace SignalChat.Middlewares
                 return new TokenService(key);
             });
             container.Register<ILoginService, LoginService>();
+            container.Register<IStockService, OnlineStockService>();
+            container.Register<IBotService, BotService>();
+            container.Register<IQueue<Message>>(() => SignalChatFactory.CreateQueue().Value, Lifestyle.Singleton);
+            container.Register<ISendMessageService, SendMessageService>();
             container.Verify();
 
             app.Use(async (context, next) =>

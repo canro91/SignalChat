@@ -1,11 +1,5 @@
 ﻿using Microsoft.AspNet.SignalR;
-using SignalChat.Bot;
-using SignalChat.Bot.Services;
 using SignalChat.Core.Contracts;
-using SignalChat.Core.Insfrastructure;
-using SignalChat.Core.Tasks;
-using SignalChat.Factories;
-using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -16,17 +10,9 @@ namespace SignalChat.Hubs
     {
         private readonly ISendMessageService _messageService;
 
-        public NotificationHub()
+        public NotificationHub(ISendMessageService messageService)
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["Database"].ConnectionString;
-            var messageRepository = new MessageRepository(connectionString);
-
-            var messageQueue = SignalChatFactory.CreateQueue();
-
-            var stockService = new OnlineStockService();
-            var botService = new BotService(stockService, messageQueue.Value);
-
-            _messageService = new SendMessageService(messageRepository, botService);
+            _messageService = messageService;
         }
 
         public override Task OnConnected()
