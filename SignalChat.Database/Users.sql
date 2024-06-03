@@ -1,7 +1,0 @@
-﻿CREATE TABLE dbo.Users
-(
-	ID UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
-    Username VARCHAR(256) NOT NULL, 
-    SaltedPassword VARCHAR(256) NOT NULL,
-	CONSTRAINT UK_Username UNIQUE(Username)
-)
