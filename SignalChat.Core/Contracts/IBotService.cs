@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace SignalChat.Core.Contracts
+﻿namespace SignalChat.Core.Contracts
 {
     public interface IBotService
     {
