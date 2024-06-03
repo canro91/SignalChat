@@ -6,4 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ServiceStack.OrmLite" Version="8.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SignalChat.Core\SignalChat.Core.csproj" />
+  </ItemGroup>
+
 </Project>

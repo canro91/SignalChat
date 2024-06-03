@@ -17,17 +17,19 @@ namespace SignalChat.Core.Tasks
             _tokenService = tokenService;
         }
 
-        public string? Login(string username, string plainTextPassword)
+        public async Task<string?> LoginAsync(string username, string plainTextPassword)
         {
-            var user = _userRepository.FindUserByUsername(username);
-            if (user != null)
+            var user = await _userRepository.FindUserByUsernameAsync(username);
+            if (user == null)
             {
-                var isVerified = _passwordService.VerifyPassword(plainTextPassword, user.SaltedPassword);
-                if (isVerified)
-                {
-                    var token = _tokenService.CreateToken(username);
-                    return token;
-                }
+                return null;
+            }
+
+            var isVerified = _passwordService.VerifyPassword(plainTextPassword, user.SaltedPassword);
+            if (isVerified)
+            {
+                var token = _tokenService.CreateToken(username);
+                return token;
             }
 
             return null;

@@ -2,6 +2,6 @@
 {
     public interface ILoginService
     {
-        string? Login(string username, string plainTextPassword);
+        Task<string?> LoginAsync(string username, string plainTextPassword);
     }
 }

@@ -11,7 +11,7 @@ async function start() {
         console.log("SignalR Connected.");
     } catch (err) {
         console.log(err);
-        setTimeout(start, 5000);
+        //setTimeout(start, 5000);
     }
 };
 
@@ -27,7 +27,7 @@ register = function () {
     pwd = document.getElementById("pwd").value;
     confirmPwd = document.getElementById("confirmPwd").value;
 
-    fetch('http://localhost:38655/api/account/register', {
+    fetch('http://localhost:5152/api/account/register', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ login = function () {
     user = document.getElementById("userLogin").value;
     pwd = document.getElementById("pwdLogin").value;
 
-    fetch('http://localhost:38655/api/account/login', {
+    fetch('http://localhost:5152/api/account/login', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
@@ -81,7 +81,7 @@ login = function () {
 };
 
 recents = function () {
-    fetch('http://localhost:38655/api/message/get', {
+    fetch('http://localhost:5152/api/message/get', {
         method: 'get',
         headers: {
             'Authorization': `Bearer ${token}`
@@ -97,7 +97,6 @@ recents = function () {
 
             data.forEach(function (m) {
                 console.log(`${m.username}: ${m.body}`);
-                //$("#chat").append(`${m.username}: ${m.body}\n`);
 
                 var chatElement = document.getElementById("chat");
                 var newNode = document.createTextNode('A message from: ' + sender + ' ' + message + '\n');

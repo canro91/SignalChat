@@ -17,16 +17,17 @@ namespace SignalChat.Controllers
             _messageRepository = messageRepository;
         }
 
-        public IEnumerable<MessageViewModel> Get()
+        public async Task<IEnumerable<MessageViewModel>> GetAsync()
         {
-            var mostRecent = _messageRepository.FindMostRecent();
-            var viewModels = mostRecent.Select(t => new MessageViewModel
+            var mostRecent = await _messageRepository.FindMostRecentAsync();
+            var messages = mostRecent.Select(t => new MessageViewModel
             {
                 Username = t.Username,
                 Body = t.Body,
                 DeliveredAt = t.DeliveredAt
             });
-            return viewModels;
+
+            return messages;
         }
     }
 }

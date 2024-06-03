@@ -2,6 +2,6 @@
 {
     public interface ISendMessageService
     {
-        bool Send(string username, string message);
+        Task<bool> SendAsync(string username, string message);
     }
 }

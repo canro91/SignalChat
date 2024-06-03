@@ -4,8 +4,8 @@ namespace SignalChat.Core.Contracts
 {
     public interface IMessageRepository
     {
-        IEnumerable<Message> FindMostRecent(int count = 50);
+        Task<IEnumerable<Message>> FindMostRecentAsync(int count = 50);
 
-        void Save(Message message);
+        Task SaveAsync(Message message);
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SignalChat.Core.Contracts;
 using SignalChat.Models;
 
@@ -20,21 +19,23 @@ namespace SignalChat.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        public IActionResult Register([FromBody] RegisterViewModel loginViewModel)
+        [Route("register")]
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterViewModel loginViewModel)
         {
-            _registerService.RegisterUser(username: loginViewModel.Username,
-                                          plainTextPassword: loginViewModel.Password);
+            await _registerService.RegisterUserAsync(
+                username: loginViewModel.Username!,
+                plainTextPassword: loginViewModel.Password!);
 
             return Ok();
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        public IActionResult Login([FromBody] LoginViewModel loginViewModel)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginViewModel loginViewModel)
         {
-            var token = _loginService.Login(username: loginViewModel.Username,
-                                            plainTextPassword: loginViewModel.Password);
+            var token = await _loginService.LoginAsync(
+                username: loginViewModel.Username!,
+                plainTextPassword: loginViewModel.Password!);
+
             return token == null
                 ? Unauthorized()
                 : Ok(token);

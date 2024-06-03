@@ -2,6 +2,6 @@
 {
     public interface IRegisterService
     {
-        void RegisterUser(string username, string plainTextPassword);
+        Task RegisterUserAsync(string username, string plainTextPassword);
     }
 }

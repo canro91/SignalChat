@@ -14,9 +14,9 @@ namespace SignalChat.Core.Tasks
             _passwordService = passwordService;
         }
 
-        public void RegisterUser(string username, string plainTextPassword)
+        public async Task RegisterUserAsync(string username, string plainTextPassword)
         {
-            var existingUser = _userRepository.FindUserByUsername(username);
+            var existingUser = await _userRepository.FindUserByUsernameAsync(username);
             if (existingUser != null)
             {
                 throw new ArgumentException($"User {username} already exists");
@@ -25,11 +25,10 @@ namespace SignalChat.Core.Tasks
             var saltedPassword = _passwordService.ProtectPassword(plainTextPassword);
             var newUser = new User
             {
-                ID = Guid.NewGuid(),
                 Username = username,
                 SaltedPassword = saltedPassword
             };
-            _userRepository.Save(newUser);
+            await _userRepository.SaveAsync(newUser);
         }
     }
 }

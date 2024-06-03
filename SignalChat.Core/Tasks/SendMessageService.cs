@@ -15,7 +15,7 @@ namespace SignalChat.Core.Tasks
             _botService = botService;
         }
 
-        public bool Send(string username, string message)
+        public async Task<bool> SendAsync(string username, string message)
         {
             var (isCommand, stockCode) = IsACommand(message);
             if (isCommand)
@@ -28,12 +28,11 @@ namespace SignalChat.Core.Tasks
             {
                 var toSend = new Message
                 {
-                    ID = Guid.NewGuid(),
                     Username = username,
                     Body = message,
                     DeliveredAt = DateTimeOffset.Now
                 };
-                _messageRepository.Save(message: toSend);
+                await _messageRepository.SaveAsync(message: toSend);
 
                 return false;
             }

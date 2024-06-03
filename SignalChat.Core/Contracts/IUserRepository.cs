@@ -4,8 +4,8 @@ namespace SignalChat.Core.Contracts
 {
     public interface IUserRepository
     {
-        User FindUserByUsername(string username);
+        Task<User?> FindUserByUsernameAsync(string username);
 
-        void Save(User newUser);
+        Task SaveAsync(User newUser);
     }
 }
