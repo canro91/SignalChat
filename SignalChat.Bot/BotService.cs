@@ -3,9 +3,7 @@ using Foundatio.Queues;
 using SignalChat.Bot.Contracts;
 using SignalChat.Core.Contracts;
 using SignalChat.Core.Domain;
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using System.Globalization;
 
 namespace SignalChat.Bot
 {
@@ -26,9 +24,8 @@ namespace SignalChat.Bot
 
             using (var stream = new MemoryStream(bytes))
             using (var reader = new StreamReader(stream))
-            using (var csv = new CsvReader(reader))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                csv.Configuration.Delimiter = ",";
                 var records = csv.GetRecords<StockQuoteCsv>();
 
                 foreach (var r in records)

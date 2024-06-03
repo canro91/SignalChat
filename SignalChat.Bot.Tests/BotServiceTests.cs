@@ -1,16 +1,14 @@
 ﻿using Foundatio.Queues;
-using NUnit.Framework;
 using SignalChat.Bot.Contracts;
 using SignalChat.Core.Domain;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SignalChat.Bot.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class BotServiceTests
     {
-        [Test]
+        [TestMethod]
         public async Task BotService_AGivenCommand_EnqueueMessage()
         {
             var stock = @"Symbol,Date,Time,Open,High,Low,Close,Volume
@@ -24,7 +22,6 @@ AAPL.US,2019-04-26,22:00:20,204.9,205,202.12,204.3,18649102";
             var lastMessage = await messageQueue.DequeueAsync();
             Assert.IsNotNull(lastMessage);
         }
-
     }
 
     public class FakeStockService : IStockService
