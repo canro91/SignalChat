@@ -29,15 +29,18 @@
         <input type="text" id="msg" placeholder="message" />
         <button onclick="sendMessage()">send</button>
     </div>
-    <script src="Scripts/jquery-1.6.4.min.js"></script>
+    <script src="js/signalr/dist/browser/signalr.js"></script>
+    <script src="js/chat.js"></script>
+    <!--<script src="Scripts/jquery-1.6.4.min.js"></script>
     <script src="Scripts/jquery.signalR-2.4.1.js"></script>
-    <script src="/signalr/hubs"></script>
-    <script type="text/javascript">
+    <script src="/signalr/hubs"></script>-->
+    <!--<script type="text/javascript">
         $(function () {
             var token = '';
 
-            $.connection.hub.logging = true;
-            notificationHubProxy = $.connection.notificationHub;
+            var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+            //notificationHubProxy = $.connection.notificationHub;
 
             register = function () {
                 user = document.getElementById("user").value;
@@ -122,23 +125,23 @@
                     });
             };
 
-            notificationHubProxy.client.updateUsers = function (username) {
-                console.log('Connected : ' + username);
-                $("#chat").append('Connected : ' + username + '\n');
-            };
+            //notificationHubProxy.client.updateUsers = function (username) {
+            //    console.log('Connected : ' + username);
+            //    $("#chat").append('Connected : ' + username + '\n');
+            //};
 
-            notificationHubProxy.client.broadcastMessage = function (message, sender) {
-                console.log('A message from: ' + sender + ' ' + message);
-                $("#chat").append('A message from: ' + sender + ' ' + message + '\n');
-            };
+            //notificationHubProxy.client.broadcastMessage = function (message, sender) {
+            //    console.log('A message from: ' + sender + ' ' + message);
+            //    $("#chat").append('A message from: ' + sender + ' ' + message + '\n');
+            //};
 
             sendMessage = function () {
                 message = document.getElementById("msg").value
-                notificationHubProxy.server.send(message);
+                //notificationHubProxy.server.send(message);
 
                 document.getElementById("msg").value = '';
             };
         });
-    </script>
+    </script>-->
 </body>
 </html>

@@ -1,20 +1,19 @@
-﻿using SignalChat.Core.Contracts;
-using SignalChat.Filters;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SignalChat.Core.Contracts;
 using SignalChat.Models;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
 
 namespace SignalChat.Controllers
 {
-    [Authorize]
-    [ValidateModel]
-    public class AccountController : ApiController
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AccountController : ControllerBase
     {
         private readonly IRegisterService _registerService;
         private readonly ILoginService _loginService;
 
-        public AccountController(IRegisterService registerService, ILoginService loginService)
+        public AccountController(IRegisterService registerService,
+                                 ILoginService loginService)
         {
             _registerService = registerService;
             _loginService = loginService;
@@ -22,30 +21,23 @@ namespace SignalChat.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public HttpResponseMessage Register([FromBody] RegisterViewModel loginViewModel)
+        public IActionResult Register([FromBody] RegisterViewModel loginViewModel)
         {
             _registerService.RegisterUser(username: loginViewModel.Username,
                                           plainTextPassword: loginViewModel.Password);
 
-            return Request.CreateResponse(HttpStatusCode.OK);
+            return Ok();
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public IHttpActionResult Login([FromBody] LoginViewModel loginViewModel)
+        public IActionResult Login([FromBody] LoginViewModel loginViewModel)
         {
-            var token = _loginService.Login(username: loginViewModel.Username, plainTextPassword: loginViewModel.Password);
-            return ReplyWith(token);
-        }
-
-        private IHttpActionResult ReplyWith(string token)
-        {
-            if (token == null)
-            {
-                return Unauthorized();
-            }
-
-            return Ok(token);
+            var token = _loginService.Login(username: loginViewModel.Username,
+                                            plainTextPassword: loginViewModel.Password);
+            return token == null
+                ? Unauthorized()
+                : Ok(token);
         }
     }
 }

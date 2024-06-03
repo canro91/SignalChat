@@ -1,6 +1,5 @@
 ﻿using SignalChat.Core.Contracts;
 using SignalChat.Core.Domain;
-using System;
 
 namespace SignalChat.Core.Tasks
 {
@@ -19,7 +18,9 @@ namespace SignalChat.Core.Tasks
         {
             var existingUser = _userRepository.FindUserByUsername(username);
             if (existingUser != null)
+            {
                 throw new ArgumentException($"User {username} already exists");
+            }
 
             var saltedPassword = _passwordService.ProtectPassword(plainTextPassword);
             var newUser = new User

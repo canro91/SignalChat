@@ -1,5 +1,4 @@
 ﻿using SignalChat.Core.Contracts;
-using System;
 using System.Security.Cryptography;
 
 namespace SignalChat.Core.Tasks

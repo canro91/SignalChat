@@ -1,6 +1,5 @@
 ﻿using SignalChat.Core.Contracts;
 using SignalChat.Core.Domain;
-using System;
 using System.Text.RegularExpressions;
 
 namespace SignalChat.Core.Tasks
@@ -41,7 +40,7 @@ namespace SignalChat.Core.Tasks
         }
 
         private static readonly Regex StockCommand = new Regex(@"^\/stock=(?<StockCode>.+)$", RegexOptions.Compiled);
-        private (bool isCommand, string stockCode)  IsACommand(string message)
+        private (bool isCommand, string? stockCode)  IsACommand(string message)
         {
             var matches = StockCommand.Match(message);
             return matches.Success ? (true, matches.Groups["StockCode"].Value)

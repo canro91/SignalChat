@@ -22,35 +22,33 @@ namespace SignalChat.Bot
         {
             byte[] bytes = _stockService.FindStockQuote(stockCode);
 
-            using (var stream = new MemoryStream(bytes))
-            using (var reader = new StreamReader(stream))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            {
-                var records = csv.GetRecords<StockQuoteCsv>();
+            using var stream = new MemoryStream(bytes);
+            using var reader = new StreamReader(stream);
+            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            var records = csv.GetRecords<StockQuoteCsv>();
 
-                foreach (var r in records)
+            foreach (var r in records)
+            {
+                var m = new Message
                 {
-                    var m = new Message
-                    {
-                        Body = string.Format(SN.Message, r.Symbol, r.Close),
-                        DeliveredAt = DateTimeOffset.Now,
-                        Username = SN.Bot
-                    };
-                    await _messageQueue.EnqueueAsync(m);
-                }
+                    Body = string.Format(SN.Message, r.Symbol, r.Close),
+                    DeliveredAt = DateTimeOffset.Now,
+                    Username = SN.Bot
+                };
+                await _messageQueue.EnqueueAsync(m);
             }
         }
     }
 
     class StockQuoteCsv
     {
-        public string Symbol { get; set; }
-        public string Date { get; set; }
-        public string Time { get; set; }
-        public string Open { get; set; }
-        public string High { get; set; }
-        public string Low { get; set; }
-        public string Close { get; set; }
-        public string Volume { get; set; }
+        public string? Symbol { get; set; }
+        public string? Date { get; set; }
+        public string? Time { get; set; }
+        public string? Open { get; set; }
+        public string? High { get; set; }
+        public string? Low { get; set; }
+        public string? Close { get; set; }
+        public string? Volume { get; set; }
     }
 }

@@ -8,14 +8,16 @@ namespace SignalChat.Core.Tasks
         private readonly IProtectPasswordService _passwordService;
         private readonly ITokenService _tokenService;
 
-        public LoginService(IUserRepository userRepository, IProtectPasswordService passwordService, ITokenService tokenService)
+        public LoginService(IUserRepository userRepository,
+                            IProtectPasswordService passwordService,
+                            ITokenService tokenService)
         {
             _userRepository = userRepository;
             _passwordService = passwordService;
             _tokenService = tokenService;
         }
 
-        public string Login(string username, string plainTextPassword)
+        public string? Login(string username, string plainTextPassword)
         {
             var user = _userRepository.FindUserByUsername(username);
             if (user != null)

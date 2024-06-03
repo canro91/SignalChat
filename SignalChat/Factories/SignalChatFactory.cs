@@ -1,6 +1,5 @@
 ﻿using Foundatio.Queues;
 using SignalChat.Core.Domain;
-using System;
 
 namespace SignalChat.Factories
 {

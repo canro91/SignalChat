@@ -2,8 +2,6 @@
 using Foundatio.Queues;
 using SignalChat.Core.Contracts;
 using SignalChat.Core.Domain;
-using System;
-using System.Threading.Tasks;
 
 namespace SignalChat.Jobs
 {
@@ -11,7 +9,8 @@ namespace SignalChat.Jobs
     {
         private readonly IBroadcastMessage _broadcastMessage;
 
-        public SendMessageIntoChatRoom(Lazy<IQueue<Message>> queue, IBroadcastMessage broadcastMessage)
+        public SendMessageIntoChatRoom(Lazy<IQueue<Message>> queue,
+                                       IBroadcastMessage broadcastMessage)
             : base(queue)
         {
             _broadcastMessage = broadcastMessage;
