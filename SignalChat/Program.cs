@@ -1,11 +1,13 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
 using SignalChat.Database.Migrations;
 using SignalChat.Extensions;
+using SignalChat.Filters;
 using SignalChat.Hubs;
 using System.Text;
 
@@ -25,10 +27,18 @@ services.AddCors(options =>
                 .AllowAnyHeader();
     });
 });
-services.AddControllers();
+services.AddControllers(options =>
+{
+    options.Filters.Add<ApiValidateModelFilter>();
+    options.Filters.Add<ExceptionFilter>();
+});
 
 services.AddFluentValidationAutoValidation();
 services.AddValidatorsFromAssemblyContaining<Program>();
+services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 var connectionString = config.GetConnectionString("Database")!;
 services.AddDataServices(connectionString);

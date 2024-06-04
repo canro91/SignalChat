@@ -2,6 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>SignalR Message</title>
+    <style>
+        .messageBox {
+            font-style: italic;
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="login-page">
@@ -11,12 +17,14 @@
                 <input type="password" id="pwd" placeholder="password" />
                 <input type="password" id="confirmPwd" placeholder="confirm password" />
                 <button onclick="register()">create</button>
+                <div id="registerMessage" class="messageBox"></div>
             </div><br />
 
             <div>
                 <input type="text" id="userLogin" placeholder="username" />
                 <input type="password" id="pwdLogin" placeholder="password" />
                 <button onclick="login()">login</button>
+                <div id="loginMessage" class="messageBox"></div>
             </div><br />
 
         </div>

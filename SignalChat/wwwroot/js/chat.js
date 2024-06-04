@@ -2,46 +2,70 @@
 var connection;
 
 register = function () {
-    user = document.getElementById("user").value;
-    pwd = document.getElementById("pwd").value;
-    confirmPwd = document.getElementById("confirmPwd").value;
+    var user = document.getElementById("user");
+    var pwd = document.getElementById("pwd");
+    var confirmPwd = document.getElementById("confirmPwd");
 
     fetch('http://localhost:5152/api/account/register', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username: user, password: pwd, confirmPassword: confirmPwd })
+        body: JSON.stringify({
+            username: user.value,
+            password: pwd.value,
+            confirmPassword: confirmPwd.value
+        })
     }).then(function (response) {
         if (response.ok) {
             console.log('Successfully registered.');
+            showRegisterMessage('Successfully registered.');
+
+            user.value = '';
+            pwd.value = '';
+            confirmPwd.value = '';
         } else {
-            console.log('Something went wrong!');
-            return response.json().then(response => { throw new Error(JSON.stringify(response)) });
+            console.error('Something went wrong!');
+            return response.json().then(response => { throw new Error(response.error) });
         }
     }).catch(function (error) {
-        console.log(error);
+        console.error(error);
+        showRegisterMessage(error);
     });
 }
 
+function showRegisterMessage(message) {
+    var messageBox = document.getElementById('registerMessage');
+    messageBox.innerHTML = message;
+    messageBox.style.display = 'block';
+    setTimeout(function () { messageBox.style.display = 'none'; }, 3000);
+}
+
 login = function () {
-    user = document.getElementById("userLogin").value;
-    pwd = document.getElementById("pwdLogin").value;
+    var user = document.getElementById("userLogin");
+    var pwd = document.getElementById("pwdLogin");
 
     fetch('http://localhost:5152/api/account/login', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username: user, password: pwd })
+        body: JSON.stringify({ username: user.value, password: pwd.value })
     }).then(function (response) {
         if (response.ok) {
             return response;
         }
+        if (response.status == 401) {
+            throw new Error('User or password are invalid!');
+        }
 
-        throw Error(response.statusText);
+        return response.json().then(response => { throw new Error(response.error) });
     }).then(response => response.text())
         .then(function (newToken) {
+
+            showLoginMessage('You\'re in. Messages coming in...');
+            login.value = '';
+            pwd.value = '';
 
             token = newToken;
 
@@ -75,10 +99,17 @@ login = function () {
             });
 
         }).catch(function (error) {
-            console.log('Something went wrong!');
-            return console.error(error.toString());
+            console.error('Something went wrong!');
+            showLoginMessage(error);
         });
 };
+
+function showLoginMessage(message) {
+    var messageBox = document.getElementById('loginMessage');
+    messageBox.innerHTML = message;
+    messageBox.style.display = 'block';
+    setTimeout(function () { messageBox.style.display = 'none'; }, 3000);
+}
 
 recents = function () {
     fetch('http://localhost:5152/api/message', {
@@ -103,7 +134,7 @@ recents = function () {
                 chatElement.appendChild(newNode);
             });
         }).catch(function (error) {
-            console.log('Something went wrong!');
+            console.error('Something went wrong!');
             console.error(error);
         });
 };
