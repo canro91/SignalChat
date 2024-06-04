@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
-using SignalChat.Bot;
 using SignalChat.Bot.Contracts;
 using SignalChat.Bot.Services;
 using SignalChat.Configuration;

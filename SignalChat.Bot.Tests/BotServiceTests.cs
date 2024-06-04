@@ -1,5 +1,6 @@
 ﻿using Foundatio.Queues;
 using SignalChat.Bot.Contracts;
+using SignalChat.Bot.Services;
 using SignalChat.Core.Domain;
 using System.Text;
 

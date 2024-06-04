@@ -5,7 +5,7 @@ using SignalChat.Core.Contracts;
 using SignalChat.Core.Domain;
 using System.Globalization;
 
-namespace SignalChat.Bot
+namespace SignalChat.Bot.Services
 {
     public class BotService : IBotService
     {
