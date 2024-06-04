@@ -21,7 +21,7 @@ namespace SignalChat.Core.Tasks
             {
                 return new TokenValidationParameters
                 {
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret)),
+                    IssuerSigningKey = SecurityKey(),
                     ValidateLifetime = false,
                     ValidateIssuer = false,
                     ValidateAudience = false
@@ -34,14 +34,25 @@ namespace SignalChat.Core.Tasks
             var claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, username));
 
-            var credentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret)), SecurityAlgorithms.HmacSha256Signature, SecurityAlgorithms.Sha256Digest);
+            var credentials = new SigningCredentials(
+                SecurityKey(),
+                SecurityAlgorithms.HmacSha256Signature,
+                SecurityAlgorithms.Sha256Digest);
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateJwtSecurityToken(issuer: null, audience: null, subject: claimsIdentity,
-                                            notBefore: null, expires: null, issuedAt: null,
-                                            signingCredentials: credentials);
+            var token = tokenHandler.CreateJwtSecurityToken(
+                issuer: null,
+                audience: null,
+                subject: claimsIdentity,
+                notBefore: null,
+                expires: null,
+                issuedAt: null,
+                signingCredentials: credentials);
 
             return token.RawData;
         }
+
+        private SymmetricSecurityKey SecurityKey()
+            => new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
     }
 }

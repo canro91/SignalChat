@@ -30,6 +30,7 @@ namespace SignalChat.Controllers
         }
 
         [HttpPost]
+        [Route("login")]
         public async Task<IActionResult> LoginAsync([FromBody] LoginViewModel loginViewModel)
         {
             var token = await _loginService.LoginAsync(

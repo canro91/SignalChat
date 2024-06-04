@@ -1,12 +1,13 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Foundatio.Queues;
-using ServiceStack;
+using Microsoft.Extensions.Options;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
 using SignalChat.Bot;
 using SignalChat.Bot.Contracts;
 using SignalChat.Bot.Services;
+using SignalChat.Configuration;
 using SignalChat.Core.Contracts;
 using SignalChat.Core.Domain;
 using SignalChat.Core.Tasks;
@@ -39,11 +40,17 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 builder.Services.AddTransient<IProtectPasswordService, ProtectPasswordService>();
 builder.Services.AddTransient<IRegisterService, RegisterService>();
+
+builder.Services
+        .AddOptions<Login>()
+        .Bind(builder.Configuration.GetSection("Login"))
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
+
 builder.Services.AddTransient<ITokenService>(provider =>
 {
-    //TODO
-    var key = "ASuperSecretSecret";
-    return new TokenService(key);
+    var login = provider.GetRequiredService<IOptions<Login>>();
+    return new TokenService(login.Value.Secret);
 });
 builder.Services.AddTransient<ILoginService, LoginService>();
 builder.Services.AddTransient<IStockService, OnlineStockService>();
