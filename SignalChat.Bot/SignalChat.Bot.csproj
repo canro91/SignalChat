@@ -16,4 +16,19 @@
     <ProjectReference Include="..\SignalChat.Core\SignalChat.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="SN.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SN.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="SN.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SN.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

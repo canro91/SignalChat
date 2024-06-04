@@ -30,9 +30,16 @@ namespace SignalChat.Bot
 
             foreach (var r in records)
             {
+                var symbol = r.Symbol;
+                var closePrice = r.Close;
+
+                var body = closePrice == StockQuoteCsv.NotAvailable
+                                ? string.Format(SN.Unavailable, symbol)
+                                : string.Format(SN.Message, symbol, closePrice);
+
                 var m = new Message
                 {
-                    Body = string.Format(SN.Message, r.Symbol, r.Close),
+                    Body = body,
                     DeliveredAt = DateTimeOffset.Now,
                     Username = SN.Bot
                 };
@@ -43,6 +50,8 @@ namespace SignalChat.Bot
 
     class StockQuoteCsv
     {
+        public const string NotAvailable = "N/D";
+
         public string? Symbol { get; set; }
         public string? Date { get; set; }
         public string? Time { get; set; }
