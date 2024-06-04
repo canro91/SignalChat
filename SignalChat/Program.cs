@@ -1,35 +1,22 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Foundatio.Extensions.Hosting.Jobs;
-using Foundatio.Queues;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using ServiceStack;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
-using SignalChat.Bot;
-using SignalChat.Bot.Contracts;
-using SignalChat.Bot.Services;
-using SignalChat.Configuration;
-using SignalChat.Core.Contracts;
-using SignalChat.Core.Domain;
-using SignalChat.Core.Tasks;
 using SignalChat.Database.Migrations;
-using SignalChat.Database.Repositories;
+using SignalChat.Extensions;
 using SignalChat.Hubs;
-using SignalChat.Jobs;
-using SignalChat.Services;
 using System.Text;
 
 const string CorsPolicyName = "ApiCorsPolicy";
 const string ChatHubName = "/chatHub";
 
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSignalR();
+var (builder, services, config) = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
+services.AddSignalR();
+
+services.AddCors(options =>
 {
     options.AddPolicy(CorsPolicyName, builder =>
     {
@@ -38,40 +25,20 @@ builder.Services.AddCors(options =>
                 .AllowAnyHeader();
     });
 });
-builder.Services.AddControllers();
+services.AddControllers();
 
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+services.AddFluentValidationAutoValidation();
+services.AddValidatorsFromAssemblyContaining<Program>();
 
-builder.Services.AddTransient<IMessageRepository, MessageRepository>();
-builder.Services.AddTransient<IUserRepository, UserRepository>();
+var connectionString = config.GetConnectionString("Database")!;
+services.AddDataServices(connectionString);
 
-builder.Services.AddTransient<IProtectPasswordService, ProtectPasswordService>();
-builder.Services.AddTransient<IRegisterService, RegisterService>();
+var login = config.GetRequiredSection("Login");
+services.AddServices(login);
 
-builder.Services
-        .AddOptions<Login>()
-        .Bind(builder.Configuration.GetSection("Login"))
-        .ValidateDataAnnotations()
-        .ValidateOnStart();
+services.AddBotServices();
 
-builder.Services.AddTransient<ITokenService>(provider =>
-{
-    var login = provider.GetRequiredService<IOptions<Login>>();
-    return new TokenService(login.Value.Secret);
-});
-builder.Services.AddTransient<ILoginService, LoginService>();
-builder.Services.AddTransient<IStockService, OnlineStockService>();
-builder.Services.AddTransient<IBotService, BotService>();
-builder.Services.AddSingleton<IQueue<Message>>(provider => new InMemoryQueue<Message>());
-builder.Services.AddTransient<ISendMessageService, SendMessageService>();
-
-string connectionString = builder.Configuration.GetConnectionString("Database")!;
-OrmLiteConfig.DialectProvider = SqlServerDialect.Provider;
-builder.Services.AddSingleton<IDbConnectionFactory>(new OrmLiteConnectionFactory(connectionString));
-
-var secret = builder.Configuration.GetValue<string>("Login:Secret");
-builder.Services
+services
     .AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -80,6 +47,8 @@ builder.Services
     })
     .AddJwtBearer(options =>
     {
+        var secret = login.GetValue<string>("Secret");
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret!)),
@@ -107,11 +76,6 @@ builder.Services
         };
     });
 
-builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
-
-builder.Services.AddTransient<IBroadcastMessage, SignalRBroadcastMessage>();
-builder.Services.AddJob<SendMessageIntoChatRoom>();
-
 var app = builder.Build();
 
 app.UseDefaultFiles();
@@ -128,9 +92,9 @@ var isDevelopment = builder.Environment.IsDevelopment();
 if (isDevelopment)
 {
     using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
+    var provider = scope.ServiceProvider;
 
-    var factory = services.GetRequiredService<IDbConnectionFactory>();
+    var factory = provider.GetRequiredService<IDbConnectionFactory>();
     var migrator = new Migrator(factory, typeof(Migration001).Assembly);
     migrator.Run();
 }
