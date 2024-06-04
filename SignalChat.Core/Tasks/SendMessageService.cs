@@ -9,7 +9,8 @@ namespace SignalChat.Core.Tasks
         private readonly IMessageRepository _messageRepository;
         private readonly IBotService _botService;
 
-        public SendMessageService(IMessageRepository messageRepository, IBotService botService)
+        public SendMessageService(IMessageRepository messageRepository,
+                                  IBotService botService)
         {
             _messageRepository = messageRepository;
             _botService = botService;
@@ -17,10 +18,10 @@ namespace SignalChat.Core.Tasks
 
         public async Task<bool> SendAsync(string username, string message)
         {
-            var (isCommand, stockCode) = IsACommand(message);
+            var (isCommand, stockCode) = IsStockCommand(message);
             if (isCommand)
             {
-                _botService.QueryAndSend(stockCode);
+                await _botService.QueryAndSendAsync(stockCode!);
 
                 return true;
             }
@@ -39,11 +40,13 @@ namespace SignalChat.Core.Tasks
         }
 
         private static readonly Regex StockCommand = new Regex(@"^\/stock=(?<StockCode>.+)$", RegexOptions.Compiled);
-        private (bool isCommand, string? stockCode)  IsACommand(string message)
+
+        private static (bool isCommand, string? stockCode)  IsStockCommand(string message)
         {
             var matches = StockCommand.Match(message);
-            return matches.Success ? (true, matches.Groups["StockCode"].Value)
-                                   : (false, null);
+            return matches.Success
+                    ? (true, matches.Groups["StockCode"].Value)
+                    : (false, null);
         }
     }
 }

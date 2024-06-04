@@ -2,8 +2,10 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Foundatio.Queues;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using ServiceStack;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
 using SignalChat.Bot;
@@ -20,6 +22,7 @@ using SignalChat.Hubs;
 using System.Text;
 
 const string CorsPolicyName = "ApiCorsPolicy";
+const string ChatHubName = "/chatHub";
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSignalR();
@@ -73,9 +76,9 @@ builder.Services
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     })
-    .AddJwtBearer(o =>
+    .AddJwtBearer(options =>
     {
-        o.TokenValidationParameters = new TokenValidationParameters
+        options.TokenValidationParameters = new TokenValidationParameters
         {
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret!)),
             ValidateIssuer = false,
@@ -83,7 +86,26 @@ builder.Services
             ValidateLifetime = false,
             ValidateIssuerSigningKey = true
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var jwtToken = context.Request.Query["token"];
+
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(jwtToken)
+                    && path.StartsWithSegments(ChatHubName))
+                {
+                    context.Token = jwtToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
     });
+
+builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 
 var app = builder.Build();
 
@@ -91,7 +113,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseCors(CorsPolicyName);
-app.MapHub<NotificationHub>("/chatHub");
+app.MapHub<NotificationHub>(ChatHubName);
 
 app.UseAuthentication();
 app.UseAuthorization();

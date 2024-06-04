@@ -18,7 +18,7 @@ namespace SignalChat.Bot
             _messageQueue = messageQueue;
         }
 
-        public async Task QueryAndSend(string stockCode)
+        public async Task QueryAndSendAsync(string stockCode)
         {
             byte[] bytes = _stockService.FindStockQuote(stockCode);
 

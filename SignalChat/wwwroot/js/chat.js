@@ -1,26 +1,5 @@
 ﻿var token = '';
-
-const connection = new signalR.HubConnectionBuilder()
-    .withUrl("/chathub")
-    .configureLogging(signalR.LogLevel.Information)
-    .build();
-
-async function start() {
-    try {
-        await connection.start();
-        console.log("SignalR Connected.");
-    } catch (err) {
-        console.log(err);
-        //setTimeout(start, 5000);
-    }
-};
-
-connection.onclose(async () => {
-    await start();
-});
-
-// Start the connection.
-start();
+var connection;
 
 register = function () {
     user = document.getElementById("user").value;
@@ -38,6 +17,7 @@ register = function () {
             console.log('Successfully registered.');
         } else {
             console.log('Something went wrong!');
+            return response.json().then(response => { throw new Error(JSON.stringify(response)) });
         }
     }).catch(function (error) {
         console.log(error);
@@ -60,28 +40,48 @@ login = function () {
         }
 
         throw Error(response.statusText);
-    }).then(response => response.json())
+    }).then(response => response.text())
         .then(function (newToken) {
 
             token = newToken;
 
-            $.connection.hub.qs = `token=${token}`;
-            $.connection.hub.start().done(function () {
-                console.log('connected');
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl("/chathub", { accessTokenFactory: () => token })
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            connection.start().then(function () {
+                console.log('Successfully connected.');
 
                 recents();
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
 
-            }).fail(function (result) {
-                console.log(result);
+            connection.on("updateUsers", function (username) {
+                console.log('Connected : ' + username);
+
+                var chatElement = document.getElementById("chat");
+                var newNode = document.createTextNode(`${username} is connected\n`);
+                chatElement.appendChild(newNode);
+            });
+
+            connection.on("broadcastMessage", function (message, sender) {
+                console.log('A message from: ' + sender + ' ' + message);
+
+                var chatElement = document.getElementById("chat");
+                var newNode = document.createTextNode(`${sender}: ${message}\n`);
+                chatElement.appendChild(newNode);
             });
 
         }).catch(function (error) {
             console.log('Something went wrong!');
+            return console.error(error.toString());
         });
 };
 
 recents = function () {
-    fetch('http://localhost:5152/api/message/get', {
+    fetch('http://localhost:5152/api/message', {
         method: 'get',
         headers: {
             'Authorization': `Bearer ${token}`
@@ -99,7 +99,7 @@ recents = function () {
                 console.log(`${m.username}: ${m.body}`);
 
                 var chatElement = document.getElementById("chat");
-                var newNode = document.createTextNode('A message from: ' + sender + ' ' + message + '\n');
+                var newNode = document.createTextNode(`${m.username}: ${m.body}\n`);
                 chatElement.appendChild(newNode);
             });
         }).catch(function (error) {
@@ -108,21 +108,6 @@ recents = function () {
         });
 };
 
-connection.on("updateUsers", function (username) {
-    console.log('Connected : ' + username);
-
-    var chatElement = document.getElementById("chat");
-    var newNode = document.createTextNode('Connected : ' + username + '\n');
-    chatElement.appendChild(newNode);
-});
-
-connection.on("broadcastMessage", function (message, sender) {
-    console.log('A message from: ' + sender + ' ' + message);
-
-    var chatElement = document.getElementById("chat");
-    var newNode = document.createTextNode('A message from: ' + sender + ' ' + message + '\n');
-    chatElement.appendChild(newNode);
-});
 
 sendMessage = function () {
     message = document.getElementById("msg").value

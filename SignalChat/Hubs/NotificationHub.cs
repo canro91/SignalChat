@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using SignalChat.Core.Contracts;
 
 namespace SignalChat.Hubs
 {
+    [Authorize]
     public class NotificationHub : Hub
     {
         private readonly ISendMessageService _messageService;
@@ -14,43 +16,27 @@ namespace SignalChat.Hubs
 
         public async override Task OnConnectedAsync()
         {
-            //if (Context.User?.Identity?.IsAuthenticated == false)
-            //    throw new System.Exception(SN.UnauthenticatedUser);
+            var username = Context.UserIdentifier
+                                ?? throw new InvalidOperationException(SN.UnauthenticatedUser);
 
-            await Clients.All.SendAsync("updateUsers", CurrentUsername);
+            await Clients.Others.SendAsync("updateUsers", username);
 
-            //var welcome = string.Format(SN.WelcomeMessage, CurrentUsername);
-            var welcome = $"Welcome to the chat, {CurrentUsername}!";
-            //var server = SN.ServerUsername;
-            var server = "SignalChat";
-            await Clients.Client(Context.ConnectionId).SendAsync("broadcastMessage", welcome, server);
+            var welcome = string.Format(SN.WelcomeMessage, username);
+            var server = SN.ServerUsername;
+            await Clients.Client(Context.ConnectionId)
+                        .SendAsync("broadcastMessage", welcome, server);
 
             await base.OnConnectedAsync();
         }
 
-        // TODO
-        //[Authorize]
-        public async Task SendMessage(string user, string message)
+        public async Task Send(string message)
         {
-            // TODO
-            //var handleAsCommand = _messageServices.Send(CurrentUsername, message);
-            //if (!handleAsCommand)
-            //{
-            //    Clients.All.broadcastMessage(message, CurrentUsername);
-            //}
+            var username = Context.UserIdentifier!;
 
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
-        }
-
-        private string CurrentUsername
-        {
-            get
+            var handleAsCommand = await _messageService.SendAsync(username, message);
+            if (!handleAsCommand)
             {
-                // TODO
-                //var claims = (Context.User.Identity as ClaimsIdentity).Claims;
-                //var username = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
-                //return username;
-                return Context.ConnectionId;
+                await Clients.All.SendAsync("broadcastMessage", message, username);
             }
         }
     }

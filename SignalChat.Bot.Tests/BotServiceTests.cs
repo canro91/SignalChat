@@ -17,7 +17,7 @@ AAPL.US,2019-04-26,22:00:20,204.9,205,202.12,204.3,18649102";
             var messageQueue = new InMemoryQueue<Message>();
             var botService = new BotService(fakeStockService, messageQueue);
 
-            await botService.QueryAndSend(stockCode: "aapl.us");
+            await botService.QueryAndSendAsync(stockCode: "aapl.us");
 
             var lastMessage = await messageQueue.DequeueAsync();
             Assert.IsNotNull(lastMessage);
