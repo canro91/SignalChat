@@ -14,7 +14,7 @@ namespace SignalChat.Validations
                .WithMessage("Username must be at least 5 characters long.")
                .MaximumLength(256)
                .WithMessage("Username cannot exceed 256 characters.")
-               .Matches("[a-zA-Z_-]+")
+               .Matches("^[a-zA-Z_-]+$")
                .WithMessage("Username can contain letters, underscores, and hyphens only.");
 
             RuleFor(x => x.Password)
