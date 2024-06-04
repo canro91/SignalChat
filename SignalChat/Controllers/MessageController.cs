@@ -17,6 +17,7 @@ namespace SignalChat.Controllers
             _messageRepository = messageRepository;
         }
 
+        [HttpGet]
         public async Task<IEnumerable<MessageViewModel>> GetAsync()
         {
             var mostRecent = await _messageRepository.FindMostRecentAsync();

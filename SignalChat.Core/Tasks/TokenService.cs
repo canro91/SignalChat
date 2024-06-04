@@ -16,18 +16,13 @@ namespace SignalChat.Core.Tasks
         }
 
         public TokenValidationParameters TokenValidationParameters
-        {
-            get
+            => new TokenValidationParameters
             {
-                return new TokenValidationParameters
-                {
-                    IssuerSigningKey = SecurityKey(),
-                    ValidateLifetime = false,
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            }
-        }
+                IssuerSigningKey = SecurityKey(),
+                ValidateLifetime = false,
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
 
         public string CreateToken(string username)
         {

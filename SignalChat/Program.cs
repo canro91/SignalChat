@@ -1,7 +1,9 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Foundatio.Queues;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
 using SignalChat.Bot;
@@ -15,6 +17,7 @@ using SignalChat.Database.Migrations;
 using SignalChat.Database.Repositories;
 using SignalChat.Factories;
 using SignalChat.Hubs;
+using System.Text;
 
 const string CorsPolicyName = "ApiCorsPolicy";
 
@@ -62,6 +65,26 @@ string connectionString = builder.Configuration.GetConnectionString("Database")!
 OrmLiteConfig.DialectProvider = SqlServerDialect.Provider;
 builder.Services.AddSingleton<IDbConnectionFactory>(new OrmLiteConnectionFactory(connectionString));
 
+var secret = builder.Configuration.GetValue<string>("Login:Secret");
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(o =>
+    {
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret!)),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = false,
+            ValidateIssuerSigningKey = true
+        };
+    });
+
 var app = builder.Build();
 
 app.UseDefaultFiles();
@@ -69,6 +92,9 @@ app.UseStaticFiles();
 
 app.UseCors(CorsPolicyName);
 app.MapHub<NotificationHub>("/chatHub");
+
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 var isDevelopment = builder.Environment.IsDevelopment();
