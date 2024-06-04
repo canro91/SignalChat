@@ -15,9 +15,20 @@ using SignalChat.Database.Repositories;
 using SignalChat.Factories;
 using SignalChat.Hubs;
 
+const string CorsPolicyName = "ApiCorsPolicy";
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSignalR();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(CorsPolicyName, builder =>
+    {
+        builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+    });
+});
 builder.Services.AddControllers();
 
 builder.Services.AddFluentValidationAutoValidation();
@@ -49,6 +60,7 @@ var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
+app.UseCors(CorsPolicyName);
 app.MapHub<NotificationHub>("/chatHub");
 app.MapControllers();
 
