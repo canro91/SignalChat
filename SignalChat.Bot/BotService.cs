@@ -12,7 +12,8 @@ namespace SignalChat.Bot
         private readonly IStockService _stockService;
         private readonly IQueue<Message> _messageQueue;
 
-        public BotService(IStockService stockService, IQueue<Message> messageQueue)
+        public BotService(IStockService stockService,
+                          IQueue<Message> messageQueue)
         {
             _stockService = stockService;
             _messageQueue = messageQueue;
@@ -20,7 +21,7 @@ namespace SignalChat.Bot
 
         public async Task QueryAndSendAsync(string stockCode)
         {
-            byte[] bytes = _stockService.FindStockQuote(stockCode);
+            byte[] bytes = await _stockService.FindStockQuoteAsync(stockCode);
 
             using var stream = new MemoryStream(bytes);
             using var reader = new StreamReader(stream);

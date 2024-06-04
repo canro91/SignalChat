@@ -5,12 +5,12 @@ namespace SignalChat.Bot.Services
 {
     public class OnlineStockService : IStockService
     {
-        public byte[] FindStockQuote(string stockCode)
+        public async Task<byte[]> FindStockQuoteAsync(string stockCode)
         {
             var request = new RestRequest($"https://stooq.com/q/l/?s={stockCode}&f=sd2t2ohlcv&h&e=csv");
 
             var client = new RestClient();
-            return client.DownloadData(request);
+            return await client.DownloadDataAsync(request)!;
         }
     }
 }

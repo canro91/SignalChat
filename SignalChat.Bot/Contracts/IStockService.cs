@@ -2,6 +2,6 @@
 {
     public interface IStockService
     {
-        byte[] FindStockQuote(string stockCode);
+        Task<byte[]> FindStockQuoteAsync(string stockCode);
     }
 }

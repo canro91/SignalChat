@@ -15,6 +15,7 @@
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.1" />
     <PackageReference Include="Foundatio" Version="10.7.1" />
+    <PackageReference Include="Foundatio.Extensions.Hosting" Version="10.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
     <PackageReference Include="ServiceStack.OrmLite.SqlServer" Version="8.2.2" />
   </ItemGroup>

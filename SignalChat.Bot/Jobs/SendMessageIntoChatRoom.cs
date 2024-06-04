@@ -9,7 +9,7 @@ namespace SignalChat.Jobs
     {
         private readonly IBroadcastMessage _broadcastMessage;
 
-        public SendMessageIntoChatRoom(Lazy<IQueue<Message>> queue,
+        public SendMessageIntoChatRoom(IQueue<Message> queue,
                                        IBroadcastMessage broadcastMessage)
             : base(queue)
         {

@@ -33,9 +33,9 @@ AAPL.US,2019-04-26,22:00:20,204.9,205,202.12,204.3,18649102";
             this.Stock = stock;
         }
 
-        public byte[] FindStockQuote(string stockCode)
+        public Task<byte[]> FindStockQuoteAsync(string stockCode)
         {
-            return Encoding.UTF8.GetBytes(Stock);
+            return Task.FromResult(Encoding.UTF8.GetBytes(Stock));
         }
     }
 }

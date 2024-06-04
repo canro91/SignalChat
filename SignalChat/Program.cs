@@ -1,5 +1,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Foundatio.Extensions.Hosting.Jobs;
 using Foundatio.Queues;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
@@ -17,8 +18,9 @@ using SignalChat.Core.Domain;
 using SignalChat.Core.Tasks;
 using SignalChat.Database.Migrations;
 using SignalChat.Database.Repositories;
-using SignalChat.Factories;
 using SignalChat.Hubs;
+using SignalChat.Jobs;
+using SignalChat.Services;
 using System.Text;
 
 const string CorsPolicyName = "ApiCorsPolicy";
@@ -61,7 +63,7 @@ builder.Services.AddTransient<ITokenService>(provider =>
 builder.Services.AddTransient<ILoginService, LoginService>();
 builder.Services.AddTransient<IStockService, OnlineStockService>();
 builder.Services.AddTransient<IBotService, BotService>();
-builder.Services.AddSingleton<IQueue<Message>>(provider => SignalChatFactory.CreateQueue().Value);
+builder.Services.AddSingleton<IQueue<Message>>(provider => new InMemoryQueue<Message>());
 builder.Services.AddTransient<ISendMessageService, SendMessageService>();
 
 string connectionString = builder.Configuration.GetConnectionString("Database")!;
@@ -106,6 +108,9 @@ builder.Services
     });
 
 builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+
+builder.Services.AddTransient<IBroadcastMessage, SignalRBroadcastMessage>();
+builder.Services.AddJob<SendMessageIntoChatRoom>();
 
 var app = builder.Build();
 

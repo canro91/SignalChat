@@ -33,8 +33,8 @@ namespace SignalChat.Hubs
         {
             var username = Context.UserIdentifier!;
 
-            var handleAsCommand = await _messageService.SendAsync(username, message);
-            if (!handleAsCommand)
+            var handledAsCommand = await _messageService.SendAsync(username, message);
+            if (!handledAsCommand)
             {
                 await Clients.All.SendAsync("broadcastMessage", message, username);
             }
