@@ -1,7 +1,6 @@
-﻿namespace SignalChat.Core.Contracts
+﻿namespace SignalChat.Core.Contracts;
+
+public interface ILoginService
 {
-    public interface ILoginService
-    {
-        Task<string?> LoginAsync(string username, string plainTextPassword);
-    }
+    Task<string?> LoginAsync(string username, string plainTextPassword);
 }

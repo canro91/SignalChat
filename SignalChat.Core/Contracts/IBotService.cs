@@ -1,7 +1,6 @@
-﻿namespace SignalChat.Core.Contracts
+﻿namespace SignalChat.Core.Contracts;
+
+public interface IBotService
 {
-    public interface IBotService
-    {
-        Task QueryAndSendAsync(string stockCode);
-    }
+    Task QueryAndSendAsync(string stockCode);
 }

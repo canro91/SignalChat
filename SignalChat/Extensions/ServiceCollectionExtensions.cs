@@ -15,48 +15,47 @@ using SignalChat.Hubs;
 using SignalChat.Jobs;
 using SignalChat.Services;
 
-namespace SignalChat.Extensions
+namespace SignalChat.Extensions;
+
+public static class ServiceCollectionExtensions
 {
-    public static class ServiceCollectionExtensions
+    public static void AddServices(this IServiceCollection services, IConfiguration loginSection)
     {
-        public static void AddServices(this IServiceCollection services, IConfiguration loginSection)
+        services.AddTransient<IProtectPasswordService, ProtectPasswordService>();
+        services.AddTransient<IRegisterService, RegisterService>();
+
+        services
+            .AddOptions<Login>()
+            .Bind(loginSection)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddTransient<ITokenService>(provider =>
         {
-            services.AddTransient<IProtectPasswordService, ProtectPasswordService>();
-            services.AddTransient<IRegisterService, RegisterService>();
+            var login = provider.GetRequiredService<IOptions<Login>>();
+            return new TokenService(login.Value.Secret);
+        });
+        services.AddTransient<ILoginService, LoginService>();
+        services.AddTransient<ISendMessageService, SendMessageService>();
 
-            services
-                .AddOptions<Login>()
-                .Bind(loginSection)
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
+        services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+        services.AddTransient<IBroadcastMessage, SignalRBroadcastMessage>();
+    }
 
-            services.AddTransient<ITokenService>(provider =>
-            {
-                var login = provider.GetRequiredService<IOptions<Login>>();
-                return new TokenService(login.Value.Secret);
-            });
-            services.AddTransient<ILoginService, LoginService>();
-            services.AddTransient<ISendMessageService, SendMessageService>();
+    public static void AddBotServices(this IServiceCollection services)
+    {
+        services.AddTransient<IBotService, BotService>();
+        services.AddTransient<IStockService, OnlineStockService>();
+        services.AddSingleton<IQueue<Message>>(provider => new InMemoryQueue<Message>());
+        services.AddJob<SendMessageIntoChatRoom>();
+    }
 
-            services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
-            services.AddTransient<IBroadcastMessage, SignalRBroadcastMessage>();
-        }
+    public static void AddDataServices(this IServiceCollection services, string connectionString)
+    {
+        services.AddTransient<IMessageRepository, MessageRepository>();
+        services.AddTransient<IUserRepository, UserRepository>();
 
-        public static void AddBotServices(this IServiceCollection services)
-        {
-            services.AddTransient<IBotService, BotService>();
-            services.AddTransient<IStockService, OnlineStockService>();
-            services.AddSingleton<IQueue<Message>>(provider => new InMemoryQueue<Message>());
-            services.AddJob<SendMessageIntoChatRoom>();
-        }
-
-        public static void AddDataServices(this IServiceCollection services, string connectionString)
-        {
-            services.AddTransient<IMessageRepository, MessageRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
-
-            OrmLiteConfig.DialectProvider = SqlServerDialect.Provider;
-            services.AddSingleton<IDbConnectionFactory>(new OrmLiteConnectionFactory(connectionString));
-        }
+        OrmLiteConfig.DialectProvider = SqlServerDialect.Provider;
+        services.AddSingleton<IDbConnectionFactory>(new OrmLiteConnectionFactory(connectionString));
     }
 }

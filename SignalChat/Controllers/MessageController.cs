@@ -3,32 +3,31 @@ using Microsoft.AspNetCore.Mvc;
 using SignalChat.Core.Contracts;
 using SignalChat.Models;
 
-namespace SignalChat.Controllers
+namespace SignalChat.Controllers;
+
+[Authorize]
+[ApiController]
+[Route("api/[controller]")]
+public class MessageController : ControllerBase
 {
-    [Authorize]
-    [ApiController]
-    [Route("api/[controller]")]
-    public class MessageController : ControllerBase
+    private readonly IMessageRepository _messageRepository;
+
+    public MessageController(IMessageRepository messageRepository)
     {
-        private readonly IMessageRepository _messageRepository;
+        _messageRepository = messageRepository;
+    }
 
-        public MessageController(IMessageRepository messageRepository)
+    [HttpGet]
+    public async Task<IEnumerable<MessageViewModel>> GetAsync()
+    {
+        var mostRecent = await _messageRepository.FindMostRecentAsync();
+        var messages = mostRecent.Select(t => new MessageViewModel
         {
-            _messageRepository = messageRepository;
-        }
+            Username = t.Username,
+            Body = t.Body,
+            DeliveredAt = t.DeliveredAt
+        });
 
-        [HttpGet]
-        public async Task<IEnumerable<MessageViewModel>> GetAsync()
-        {
-            var mostRecent = await _messageRepository.FindMostRecentAsync();
-            var messages = mostRecent.Select(t => new MessageViewModel
-            {
-                Username = t.Username,
-                Body = t.Body,
-                DeliveredAt = t.DeliveredAt
-            });
-
-            return messages;
-        }
+        return messages;
     }
 }

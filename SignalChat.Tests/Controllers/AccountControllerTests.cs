@@ -6,101 +6,100 @@ using SignalChat.Database.Migrations;
 using SignalChat.Database.Repositories;
 using SignalChat.Models;
 
-namespace SignalChat.Tests.Controllers
+namespace SignalChat.Tests.Controllers;
+
+[TestClass]
+public class AccountControllerTests
 {
-    [TestClass]
-    public class AccountControllerTests
+    [TestMethod]
+    public async Task RegisterAsync_ValidRequest_ReturnsOk()
     {
-        [TestMethod]
-        public async Task RegisterAsync_ValidRequest_ReturnsOk()
+        var controller = BuildController();
+
+        var request = new RegisterViewModel
         {
-            var controller = BuildController();
+            Username = "username",
+            Password = "password",
+            ConfirmPassword = "password"
+        };
+        var result = await controller.RegisterAsync(request);
 
-            var request = new RegisterViewModel
-            {
-                Username = "username",
-                Password = "password",
-                ConfirmPassword = "password"
-            };
-            var result = await controller.RegisterAsync(request);
+        Assert.IsInstanceOfType<OkResult>(result);
+    }
 
-            Assert.IsInstanceOfType<OkResult>(result);
-        }
+    [TestMethod]
+    public async Task RegisterAsync_UserAlreadyExists_ThrowsException()
+    {
+        var controller = BuildController();
 
-        [TestMethod]
-        public async Task RegisterAsync_UserAlreadyExists_ThrowsException()
+        var request = new RegisterViewModel
         {
-            var controller = BuildController();
+            Username = "username",
+            Password = "password",
+            ConfirmPassword = "password"
+        };
+        await controller.RegisterAsync(request);
 
-            var request = new RegisterViewModel
-            {
-                Username = "username",
-                Password = "password",
-                ConfirmPassword = "password"
-            };
-            await controller.RegisterAsync(request);
+        await Assert.ThrowsExceptionAsync<ArgumentException>(()
+            => controller.RegisterAsync(request));
+    }
 
-            await Assert.ThrowsExceptionAsync<ArgumentException>(()
-                => controller.RegisterAsync(request));
-        }
+    [TestMethod]
+    public async Task LoginAsync_UserDoesNotExist_ReturnsUnauthorized()
+    {
+        var controller = BuildController();
 
-        [TestMethod]
-        public async Task LoginAsync_UserDoesNotExist_ReturnsUnauthorized()
+        var userDoesNotExist = new LoginViewModel
         {
-            var controller = BuildController();
+            Username = "username",
+            Password = "password"
+        };
+        var result = await controller.LoginAsync(userDoesNotExist);
 
-            var userDoesNotExist = new LoginViewModel
-            {
-                Username = "username",
-                Password = "password"
-            };
-            var result = await controller.LoginAsync(userDoesNotExist);
+        Assert.IsInstanceOfType<UnauthorizedResult>(result);
+    }
 
-            Assert.IsInstanceOfType<UnauthorizedResult>(result);
-        }
+    [TestMethod]
+    public async Task LoginAsync_UserExistAndPasswordIsCorrect_ReturnsOk()
+    {
+        var controller = BuildController();
 
-        [TestMethod]
-        public async Task LoginAsync_UserExistAndPasswordIsCorrect_ReturnsOk()
+        var registerRequest = new RegisterViewModel
         {
-            var controller = BuildController();
+            Username = "username",
+            Password = "password",
+            ConfirmPassword = "password"
+        };
+        await controller.RegisterAsync(registerRequest);
 
-            var registerRequest = new RegisterViewModel
-            {
-                Username = "username",
-                Password = "password",
-                ConfirmPassword = "password"
-            };
-            await controller.RegisterAsync(registerRequest);
-
-            var loginRequest = new LoginViewModel
-            {
-                Username = registerRequest.Username,
-                Password = registerRequest.Password
-            };
-            var result = await controller.LoginAsync(loginRequest);
-
-            Assert.IsInstanceOfType<OkObjectResult>(result);
-
-            var okResult = result as OkObjectResult;
-            Assert.IsNotNull(okResult);
-            Assert.IsNotNull(okResult.Value);
-            Assert.IsInstanceOfType<string>(okResult.Value);
-        }
-
-        private static AccountController BuildController()
+        var loginRequest = new LoginViewModel
         {
-            var factory = new OrmLiteConnectionFactory(":memory:", SqliteDialect.Provider);
-            var migrator = new Migrator(factory, typeof(Migration001).Assembly);
-            migrator.Run();
+            Username = registerRequest.Username,
+            Password = registerRequest.Password
+        };
+        var result = await controller.LoginAsync(loginRequest);
 
-            var userRepository = new UserRepository(factory);
-            var passwordService = new ProtectPasswordService();
-            var tokenService = new TokenService("ThisIsAVeryVeryVeryVeryVerySecureSecret");
+        Assert.IsInstanceOfType<OkObjectResult>(result);
 
-            var registerService = new RegisterService(userRepository, passwordService);
-            var loginService = new LoginService(userRepository, passwordService, tokenService);
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.IsNotNull(okResult.Value);
+        Assert.IsInstanceOfType<string>(okResult.Value);
+    }
 
-            return new AccountController(registerService, loginService);
-        }
+    private static AccountController BuildController()
+    {
+        var factory = new OrmLiteConnectionFactory(":memory:", SqliteDialect.Provider);
+        var migrator = new Migrator(factory, typeof(Migration001).Assembly);
+        migrator.Run();
+
+        var userRepository = new UserRepository(factory);
+        var passwordService = new ProtectPasswordService();
+        var tokenService = new TokenService("ThisIsAVeryVeryVeryVeryVerySecureSecret");
+
+        var registerService = new RegisterService(userRepository, passwordService);
+        var loginService = new LoginService(userRepository, passwordService, tokenService);
+
+        return new AccountController(registerService, loginService);
     }
 }

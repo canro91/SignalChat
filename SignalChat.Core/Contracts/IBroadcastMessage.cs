@@ -1,7 +1,6 @@
-﻿namespace SignalChat.Core.Contracts
+﻿namespace SignalChat.Core.Contracts;
+
+public interface IBroadcastMessage
 {
-    public interface IBroadcastMessage
-    {
-        void BroadcastMessage(string message, string fromUsername);
-    }
+    void BroadcastMessage(string message, string fromUsername);
 }

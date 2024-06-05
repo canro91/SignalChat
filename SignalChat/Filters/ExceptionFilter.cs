@@ -2,25 +2,24 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 
-namespace SignalChat.Filters
+namespace SignalChat.Filters;
+
+public class ExceptionFilter : IExceptionFilter
 {
-    public class ExceptionFilter : IExceptionFilter
+    public void OnException(ExceptionContext context)
     {
-        public void OnException(ExceptionContext context)
+        var exception = context.Exception;
+
+        var value = new
         {
-            var exception = context.Exception;
+            Error = exception.Message,
+            exception.StackTrace
+        };
 
-            var value = new
-            {
-                Error = exception.Message,
-                exception.StackTrace
-            };
-
-            var result = new JsonResult(value)
-            {
-                StatusCode = (int)HttpStatusCode.InternalServerError
-            };
-            context.Result = result;
-        }
+        var result = new JsonResult(value)
+        {
+            StatusCode = (int)HttpStatusCode.InternalServerError
+        };
+        context.Result = result;
     }
 }

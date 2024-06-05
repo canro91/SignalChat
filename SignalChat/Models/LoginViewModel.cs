@@ -1,9 +1,8 @@
-﻿namespace SignalChat.Models
-{
-    public class LoginViewModel
-    {
-        public string? Username { get; set; }
+﻿namespace SignalChat.Models;
 
-        public string? Password { get; set; }
-    }
+public class LoginViewModel
+{
+    public string? Username { get; set; }
+
+    public string? Password { get; set; }
 }

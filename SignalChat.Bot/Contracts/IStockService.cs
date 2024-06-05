@@ -1,7 +1,6 @@
-﻿namespace SignalChat.Bot.Contracts
+﻿namespace SignalChat.Bot.Contracts;
+
+public interface IStockService
 {
-    public interface IStockService
-    {
-        Task<byte[]> FindStockQuoteAsync(string stockCode);
-    }
+    Task<byte[]> FindStockQuoteAsync(string stockCode);
 }

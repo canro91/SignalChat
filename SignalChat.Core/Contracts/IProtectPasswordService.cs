@@ -1,9 +1,8 @@
-﻿namespace SignalChat.Core.Contracts
-{
-    public interface IProtectPasswordService
-    {
-        string ProtectPassword(string plainTextPassword);
+﻿namespace SignalChat.Core.Contracts;
 
-        bool VerifyPassword(string plainTextPassword, string saltedPassword);
-    }
+public interface IProtectPasswordService
+{
+    string ProtectPassword(string plainTextPassword);
+
+    bool VerifyPassword(string plainTextPassword, string saltedPassword);
 }

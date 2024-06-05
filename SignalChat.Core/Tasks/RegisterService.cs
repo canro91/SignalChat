@@ -1,34 +1,33 @@
 ﻿using SignalChat.Core.Contracts;
 using SignalChat.Core.Domain;
 
-namespace SignalChat.Core.Tasks
+namespace SignalChat.Core.Tasks;
+
+public class RegisterService : IRegisterService
 {
-    public class RegisterService : IRegisterService
+    private readonly IUserRepository _userRepository;
+    private readonly IProtectPasswordService _passwordService;
+
+    public RegisterService(IUserRepository userRepository, IProtectPasswordService passwordService)
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IProtectPasswordService _passwordService;
+        _userRepository = userRepository;
+        _passwordService = passwordService;
+    }
 
-        public RegisterService(IUserRepository userRepository, IProtectPasswordService passwordService)
+    public async Task RegisterUserAsync(string username, string plainTextPassword)
+    {
+        var existingUser = await _userRepository.FindUserByUsernameAsync(username);
+        if (existingUser != null)
         {
-            _userRepository = userRepository;
-            _passwordService = passwordService;
+            throw new ArgumentException($"User {username} already exists");
         }
 
-        public async Task RegisterUserAsync(string username, string plainTextPassword)
+        var saltedPassword = _passwordService.ProtectPassword(plainTextPassword);
+        var newUser = new User
         {
-            var existingUser = await _userRepository.FindUserByUsernameAsync(username);
-            if (existingUser != null)
-            {
-                throw new ArgumentException($"User {username} already exists");
-            }
-
-            var saltedPassword = _passwordService.ProtectPassword(plainTextPassword);
-            var newUser = new User
-            {
-                Username = username,
-                SaltedPassword = saltedPassword
-            };
-            await _userRepository.SaveAsync(newUser);
-        }
+            Username = username,
+            SaltedPassword = saltedPassword
+        };
+        await _userRepository.SaveAsync(newUser);
     }
 }
