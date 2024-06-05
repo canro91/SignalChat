@@ -34,7 +34,7 @@ When SignalChat runs in "Development," it creates the required database and appl
 
 1. Clone this repository
 1. On the root folder, run `docker-compose up -d`
-1. Go to [](http://localhost:5000/)
+1. Go to [http://localhost:5000/](http://localhost:5000/)
 1. Enjoy!
 
 ### Manually 
