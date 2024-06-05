@@ -6,7 +6,7 @@ register = function () {
     var pwd = document.getElementById("pwd");
     var confirmPwd = document.getElementById("confirmPwd");
 
-    fetch('http://localhost:5152/api/account/register', {
+    fetch('api/account/register', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
@@ -45,7 +45,7 @@ login = function () {
     var user = document.getElementById("userLogin");
     var pwd = document.getElementById("pwdLogin");
 
-    fetch('http://localhost:5152/api/account/login', {
+    fetch('api/account/login', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
@@ -110,7 +110,7 @@ function showLoginMessage(message) {
 }
 
 recents = function () {
-    fetch('http://localhost:5152/api/message', {
+    fetch('api/message', {
         method: 'get',
         headers: {
             'Authorization': `Bearer ${token}`

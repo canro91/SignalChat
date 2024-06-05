@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  sql:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    container_name: signalchat_sql_server2019
+    ports:
+      - "1433:1433" 
+    environment:
+      - ACCEPT_EULA=y
+      - SA_PASSWORD=${PASS}
+      
+  signalchat:
+    build: 
+      context: .
+      dockerfile: SignalChat/Dockerfile
+    container_name: signalchat
+    ports:
+      - "5000:8080"
+    environment:
+      - "ASPNETCORE_ENVIRONMENT=Development"
+      - "ConnectionStrings:Database=Application Name=SignalChat;Data Source=sql,1433;Initial Catalog=SignalChat;User ID=sa;Password=${PASS};Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;MultipleActiveResultSets=True;"
+    depends_on:
+      - sql

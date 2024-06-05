@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
+using SignalChat.Database;
 using SignalChat.Database.Migrations;
 using SignalChat.Extensions;
 using SignalChat.Filters;
@@ -103,6 +104,12 @@ if (isDevelopment)
 {
     using var scope = app.Services.CreateScope();
     var provider = scope.ServiceProvider;
+
+    var database = new SqlDatabase(connectionString);
+    if (!database.Exists())
+    {
+        database.Create();
+    }
 
     var factory = provider.GetRequiredService<IDbConnectionFactory>();
     var migrator = new Migrator(factory, typeof(Migration001).Assembly);

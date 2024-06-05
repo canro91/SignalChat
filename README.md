@@ -26,6 +26,19 @@ SignalChat uses a n-tier architecture with services and repositories for simplic
 
 ## Installation
 
+To install SignalChat, you need a .NET environment and a SQL Server instance up and running. SignalChat was developed and tested using .NET 8.0 and SQL Server 2019.
+
+When SignalChat runs in "Development," it creates the required database and applies migrations, if needed.
+
+### Using Docker
+
+1. Clone this repository
+1. On the root folder, run `docker-compose up -d`
+1. Go to [](http://localhost:5000/)
+1. Enjoy!
+
+### Manually 
+
 1. Clone this repository
 1. Have a SQL Server instance up and running. Make sure to have credentials with enough permissions to create tables.
 1. Inside your SQL Server instance, create a database called: `SignalChat`
