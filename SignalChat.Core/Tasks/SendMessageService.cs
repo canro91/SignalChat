@@ -41,7 +41,7 @@ public class SendMessageService : ISendMessageService
 
     private static readonly Regex StockCommand = new Regex(@"^\/stock=(?<StockCode>.+)$", RegexOptions.Compiled);
 
-    private static (bool isCommand, string? stockCode)  IsStockCommand(string message)
+    private static (bool isCommand, string? stockCode) IsStockCommand(string message)
     {
         var matches = StockCommand.Match(message);
         return matches.Success

@@ -48,7 +48,7 @@ public class BotService : IBotService
     }
 }
 
-class StockQuoteCsv
+internal class StockQuoteCsv
 {
     public const string NotAvailable = "N/D";
 

@@ -62,7 +62,6 @@ login = function () {
         return response.json().then(response => { throw new Error(response.error) });
     }).then(response => response.text())
         .then(function (newToken) {
-
             showLoginMessage('You\'re in. Messages coming in...');
             login.value = '';
             pwd.value = '';
@@ -97,7 +96,6 @@ login = function () {
                 var newNode = document.createTextNode(`${sender}: ${message}\n`);
                 chatElement.appendChild(newNode);
             });
-
         }).catch(function (error) {
             console.error('Something went wrong!');
             showLoginMessage(error);
@@ -125,7 +123,6 @@ recents = function () {
         throw Error(response.statusText);
     }).then(response => response.json())
         .then(function (data) {
-
             data.forEach(function (m) {
                 console.log(`${m.username}: ${m.body}`);
 
@@ -138,7 +135,6 @@ recents = function () {
             console.error(error);
         });
 };
-
 
 sendMessage = function () {
     message = document.getElementById("msg").value

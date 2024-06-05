@@ -14,7 +14,7 @@ public class NotificationHub : Hub
         _messageService = messageService;
     }
 
-    public async override Task OnConnectedAsync()
+    public override async Task OnConnectedAsync()
     {
         var username = Context.UserIdentifier
                             ?? throw new InvalidOperationException(SN.UnauthenticatedUser);
