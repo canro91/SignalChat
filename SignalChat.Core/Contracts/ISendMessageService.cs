@@ -1,7 +1,6 @@
-﻿namespace SignalChat.Core.Contracts
+﻿namespace SignalChat.Core.Contracts;
+
+public interface ISendMessageService
 {
-    public interface ISendMessageService
-    {
-        bool Send(string username, string message);
-    }
+    Task<bool> SendAsync(string username, string message);
 }

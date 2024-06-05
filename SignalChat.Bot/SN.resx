@@ -123,4 +123,7 @@
   <data name="Message" xml:space="preserve">
     <value>{0} quote is ${1} per share</value>
   </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>This is embarrasing. But it seems {0} is unavailable</value>
+  </data>
 </root>

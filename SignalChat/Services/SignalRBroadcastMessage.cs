@@ -1,15 +1,20 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using SignalChat.Core.Contracts;
 using SignalChat.Hubs;
 
-namespace SignalChat.Services
+namespace SignalChat.Services;
+
+public class SignalRBroadcastMessage : IBroadcastMessage
 {
-    public class SignalRBroadcastMessage : IBroadcastMessage
+    private readonly IHubContext<NotificationHub> _hub;
+
+    public SignalRBroadcastMessage(IHubContext<NotificationHub> hub)
     {
-        public void BroadcastMessage(string message, string fromUsername)
-        {
-            var hub = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
-            hub.Clients.All.broadcastMessage(message, fromUsername);
-        }
+        _hub = hub;
+    }
+
+    public void BroadcastMessage(string message, string fromUsername)
+    {
+        _hub.Clients.All.SendAsync("broadcastMessage", message, fromUsername);
     }
 }

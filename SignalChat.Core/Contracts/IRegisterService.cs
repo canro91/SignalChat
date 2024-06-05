@@ -1,7 +1,6 @@
-﻿namespace SignalChat.Core.Contracts
+﻿namespace SignalChat.Core.Contracts;
+
+public interface IRegisterService
 {
-    public interface IRegisterService
-    {
-        void RegisterUser(string username, string plainTextPassword);
-    }
+    Task RegisterUserAsync(string username, string plainTextPassword);
 }

@@ -1,10 +1,10 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
-namespace SignalChat.Core.Contracts
+namespace SignalChat.Core.Contracts;
+
+public interface ITokenService
 {
-    public interface ITokenService
-    {
-        TokenValidationParameters TokenValidationParameters { get; }
-        string CreateToken(string username);
-    }
+    TokenValidationParameters TokenValidationParameters { get; }
+
+    string CreateToken(string username);
 }

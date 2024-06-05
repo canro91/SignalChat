@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>SignalR Message</title>
+    <style>
+        .messageBox {
+            font-style: italic;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        <div class="form">
+            <div>
+                <input type="text" id="user" placeholder="name" />
+                <input type="password" id="pwd" placeholder="password" />
+                <input type="password" id="confirmPwd" placeholder="confirm password" />
+                <button onclick="register()">create</button>
+                <div id="registerMessage" class="messageBox"></div>
+            </div><br />
+
+            <div>
+                <input type="text" id="userLogin" placeholder="username" />
+                <input type="password" id="pwdLogin" placeholder="password" />
+                <button onclick="login()">login</button>
+                <div id="loginMessage" class="messageBox"></div>
+            </div><br />
+        </div>
+    </div>
+
+    <div>
+        <textarea style="width: 600px; height: 300px" id="chat"></textarea>
+
+        <br />
+        <input type="text" id="msg" placeholder="message" />
+        <button onclick="sendMessage()">send</button>
+    </div>
+    <script src="js/signalr/dist/browser/signalr.js"></script>
+    <script src="js/chat.js"></script>
+</body>
+</html>

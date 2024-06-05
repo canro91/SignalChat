@@ -1,28 +1,33 @@
-﻿using SignalChat.Core.Contracts;
-using SignalChat.Filters;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SignalChat.Core.Contracts;
 using SignalChat.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
 
-namespace SignalChat.Controllers
+namespace SignalChat.Controllers;
+
+[Authorize]
+[ApiController]
+[Route("api/[controller]")]
+public class MessageController : ControllerBase
 {
-    [Authorize]
-    [ValidateModel]
-    public class MessageController : ApiController
+    private readonly IMessageRepository _messageRepository;
+
+    public MessageController(IMessageRepository messageRepository)
     {
-        private readonly IMessageRepository _messageRepository;
+        _messageRepository = messageRepository;
+    }
 
-        public MessageController(IMessageRepository messageRepository)
+    [HttpGet]
+    public async Task<IEnumerable<MessageViewModel>> GetAsync()
+    {
+        var mostRecent = await _messageRepository.FindMostRecentAsync();
+        var messages = mostRecent.Select(t => new MessageViewModel
         {
-            _messageRepository = messageRepository;
-        }
+            Username = t.Username,
+            Body = t.Body,
+            DeliveredAt = t.DeliveredAt
+        });
 
-        public IEnumerable<MessageViewModel> Get()
-        {
-            var mostRecent = _messageRepository.FindMostRecent();
-            var viewModels = mostRecent.Select(t => new MessageViewModel(t));
-            return viewModels;
-        }
+        return messages;
     }
 }

@@ -1,11 +1,10 @@
 ﻿using SignalChat.Core.Domain;
-using System.Collections.Generic;
 
-namespace SignalChat.Core.Contracts
+namespace SignalChat.Core.Contracts;
+
+public interface IMessageRepository
 {
-    public interface IMessageRepository
-    {
-        IEnumerable<Message> FindMostRecent(int count = 50);
-        void Save(Message message);
-    }
+    Task<IEnumerable<Message>> FindMostRecentAsync(int count = 50);
+
+    Task SaveAsync(Message message);
 }

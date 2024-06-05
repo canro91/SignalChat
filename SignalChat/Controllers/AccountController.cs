@@ -1,51 +1,44 @@
-﻿using SignalChat.Core.Contracts;
-using SignalChat.Filters;
+﻿using Microsoft.AspNetCore.Mvc;
+using SignalChat.Core.Contracts;
 using SignalChat.Models;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
 
-namespace SignalChat.Controllers
+namespace SignalChat.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class AccountController : ControllerBase
 {
-    [Authorize]
-    [ValidateModel]
-    public class AccountController : ApiController
+    private readonly IRegisterService _registerService;
+    private readonly ILoginService _loginService;
+
+    public AccountController(IRegisterService registerService,
+                             ILoginService loginService)
     {
-        private readonly IRegisterService _registerService;
-        private readonly ILoginService _loginService;
+        _registerService = registerService;
+        _loginService = loginService;
+    }
 
-        public AccountController(IRegisterService registerService, ILoginService loginService)
-        {
-            _registerService = registerService;
-            _loginService = loginService;
-        }
+    [HttpPost]
+    [Route("register")]
+    public async Task<IActionResult> RegisterAsync([FromBody] RegisterViewModel loginViewModel)
+    {
+        await _registerService.RegisterUserAsync(
+            username: loginViewModel.Username!,
+            plainTextPassword: loginViewModel.Password!);
 
-        [HttpPost]
-        [AllowAnonymous]
-        public HttpResponseMessage Register([FromBody] RegisterViewModel loginViewModel)
-        {
-            _registerService.RegisterUser(username: loginViewModel.Username,
-                                          plainTextPassword: loginViewModel.Password);
+        return Ok();
+    }
 
-            return Request.CreateResponse(HttpStatusCode.OK);
-        }
+    [HttpPost]
+    [Route("login")]
+    public async Task<IActionResult> LoginAsync([FromBody] LoginViewModel loginViewModel)
+    {
+        var token = await _loginService.LoginAsync(
+            username: loginViewModel.Username!,
+            plainTextPassword: loginViewModel.Password!);
 
-        [HttpPost]
-        [AllowAnonymous]
-        public IHttpActionResult Login([FromBody] LoginViewModel loginViewModel)
-        {
-            var token = _loginService.Login(username: loginViewModel.Username, plainTextPassword: loginViewModel.Password);
-            return ReplyWith(token);
-        }
-
-        private IHttpActionResult ReplyWith(string token)
-        {
-            if (token == null)
-            {
-                return Unauthorized();
-            }
-
-            return Ok(token);
-        }
+        return token == null
+            ? Unauthorized()
+            : Ok(token);
     }
 }

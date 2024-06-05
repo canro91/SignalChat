@@ -1,51 +1,51 @@
 ﻿using SignalChat.Core.Contracts;
 using SignalChat.Core.Domain;
-using System;
 using System.Text.RegularExpressions;
 
-namespace SignalChat.Core.Tasks
+namespace SignalChat.Core.Tasks;
+
+public class SendMessageService : ISendMessageService
 {
-    public class SendMessageService : ISendMessageService
+    private readonly IMessageRepository _messageRepository;
+    private readonly IBotService _botService;
+
+    public SendMessageService(IMessageRepository messageRepository,
+                              IBotService botService)
     {
-        private readonly IMessageRepository _messageRepository;
-        private readonly IBotService _botService;
+        _messageRepository = messageRepository;
+        _botService = botService;
+    }
 
-        public SendMessageService(IMessageRepository messageRepository, IBotService botService)
+    public async Task<bool> SendAsync(string username, string message)
+    {
+        var (isCommand, stockCode) = IsStockCommand(message);
+        if (isCommand)
         {
-            _messageRepository = messageRepository;
-            _botService = botService;
+            await _botService.QueryAndSendAsync(stockCode!);
+
+            return true;
         }
-
-        public bool Send(string username, string message)
+        else
         {
-            var (isCommand, stockCode) = IsACommand(message);
-            if (isCommand)
+            var toSend = new Message
             {
-                _botService.QueryAndSend(stockCode);
+                Username = username,
+                Body = message,
+                DeliveredAt = DateTimeOffset.Now
+            };
+            await _messageRepository.SaveAsync(message: toSend);
 
-                return true;
-            }
-            else
-            {
-                var toSend = new Message
-                {
-                    ID = Guid.NewGuid(),
-                    Username = username,
-                    Body = message,
-                    DeliveredAt = DateTimeOffset.Now
-                };
-                _messageRepository.Save(message: toSend);
-
-                return false;
-            }
+            return false;
         }
+    }
 
-        private static readonly Regex StockCommand = new Regex(@"^\/stock=(?<StockCode>.+)$", RegexOptions.Compiled);
-        private (bool isCommand, string stockCode)  IsACommand(string message)
-        {
-            var matches = StockCommand.Match(message);
-            return matches.Success ? (true, matches.Groups["StockCode"].Value)
-                                   : (false, null);
-        }
+    private static readonly Regex StockCommand = new Regex(@"^\/stock=(?<StockCode>.+)$", RegexOptions.Compiled);
+
+    private static (bool isCommand, string? stockCode) IsStockCommand(string message)
+    {
+        var matches = StockCommand.Match(message);
+        return matches.Success
+                ? (true, matches.Groups["StockCode"].Value)
+                : (false, null);
     }
 }

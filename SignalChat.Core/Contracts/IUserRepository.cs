@@ -1,10 +1,10 @@
 ﻿using SignalChat.Core.Domain;
 
-namespace SignalChat.Core.Contracts
+namespace SignalChat.Core.Contracts;
+
+public interface IUserRepository
 {
-    public interface IUserRepository
-    {
-        User FindUserByUsername(string username);
-        void Save(User newUser);
-    }
+    Task<User?> FindUserByUsernameAsync(string username);
+
+    Task SaveAsync(User newUser);
 }
