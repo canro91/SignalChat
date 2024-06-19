@@ -1,5 +1,7 @@
 # SignalChat
 
+![](https://img.shields.io/badge/net-8.0-brightgreen.svg) ![](https://github.com/canro91/SignalChat/workflows/.NET/badge.svg) ![](https://img.shields.io/badge/educational_purposes-handle_with_care-blue)
+
 SignalChat is a simple browser-based chat application using ASP.NET Core and SignalR.
 
 SignalChat uses an n-tier architecture with services and repositories for simplicity. Instead of a full-blown message broker, it uses an in-memory queue and a background service to implement a decoupled bot that processes stock commands.
@@ -65,3 +67,5 @@ SignalChat has three endpoints:
 and one SignalR hub:
 
 * `/chatHub`
+
+_For educational purposes only. Well, it was more for interview purposes. But you get the idea. Handle with care._
